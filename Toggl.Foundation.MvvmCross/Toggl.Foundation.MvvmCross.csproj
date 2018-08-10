@@ -25,5 +25,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ViewModels\Settings\" />
+    <Folder Include="ViewModels\Calendar\" />
   </ItemGroup>
 </Project>
