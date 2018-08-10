@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -18,8 +17,13 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
     {
         private readonly IInteractorFactory interactorFactory;
 
-        public NestableObservableCollection<UserCalendarCollection, SelectableUserCalendarViewModel> Calendars { get; }
-            = new NestableObservableCollection<UserCalendarCollection, SelectableUserCalendarViewModel>();
+
+        public ObservableGroupedOrderedCollection<SelectableUserCalendarViewModel> Calendars { get; }
+            = new ObservableGroupedOrderedCollection<SelectableUserCalendarViewModel>(
+                indexKey: c => c.Id,
+                orderingKey: c => c.Name,
+                groupingKey: c => c.SourceName
+            );
 
         public InputAction<SelectableUserCalendarViewModel> SelectCalendarAction { get; }
 
@@ -36,40 +40,21 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
         {
             await base.Initialize();
 
-            var userCalendarCollections = await interactorFactory
+            await interactorFactory
                 .GetUserCalendars()
                 .Execute()
-                .Do(test)
-                .Select(calendars => calendars
-                        .OrderBy(calendar => calendar.Name)
-                        .GroupBy(calendar => calendar.SourceName)
-                        .OrderBy(grouping => grouping.Key))
-                .Select(createCalendarCollections);
-
-            Calendars.AddRange(userCalendarCollections);
+                .Select(calendars => calendars.Select(toSelectable))
+                .Do(calendars => calendars
+                    .ForEach(calendar => Calendars.InsertItem(calendar)));
         }
-
-        private void test(IEnumerable<UserCalendar> c)
-        {
-            Console.WriteLine(c);
-        }
-
-        private IEnumerable<UserCalendarCollection> createCalendarCollections(
-            IOrderedEnumerable<IGrouping<string, UserCalendar>> groups)
-            => groups.Select(toUserCalendarCollection);
-
-        private UserCalendarCollection toUserCalendarCollection(IGrouping<string, UserCalendar> groupedCalendars)
-            => new UserCalendarCollection(
-                groupedCalendars.Key,
-                groupedCalendars.Select(toSelectable)
-            );
 
         private SelectableUserCalendarViewModel toSelectable(UserCalendar calendar)
             => new SelectableUserCalendarViewModel(calendar, false);
 
-        IObservable<Unit> selectCalendar(SelectableUserCalendarViewModel arg)
+        IObservable<Unit> selectCalendar(SelectableUserCalendarViewModel calendar)
         {
-            throw new NotImplementedException();
+            Console.WriteLine($"Selected {calendar.Name}");
+            return Observable.Return(Unit.Default);
         }
     }
 }

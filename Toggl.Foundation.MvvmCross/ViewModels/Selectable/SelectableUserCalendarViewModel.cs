@@ -8,6 +8,8 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Selectable
 
         public string Name { get; }
 
+        public string SourceName { get; }
+
         public bool Selected { get; set; }
 
         public SelectableUserCalendarViewModel(UserCalendar calendar, bool selected)
@@ -16,6 +18,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Selectable
 
             Id = calendar.Id;
             Name = calendar.Name;
+            SourceName = calendar.SourceName;
             Selected = selected;
         }
     }

@@ -354,7 +354,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels
 
         private async Task openReports()
         {
-            await navigate<ReportsViewModel>();
+            await navigate<SelectUserCalendarsViewModel>();
         }
 
         private Task openSyncFailures()

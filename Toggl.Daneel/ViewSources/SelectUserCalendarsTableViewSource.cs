@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using Foundation;
 using Toggl.Daneel.Cells.Calendar;
 using Toggl.Foundation.MvvmCross.Collections;
@@ -9,7 +9,7 @@ using UIKit;
 namespace Toggl.Daneel.ViewSources
 {
     public sealed class SelectUserCalendarsTableViewSource
-        : SectionedListTableViewSource<SelectableUserCalendarViewModel, SelectableUserCalendarViewCell>
+        : ReactiveSectionedListTableViewSource<SelectableUserCalendarViewModel, SelectableUserCalendarViewCell>
     {
         private const int rowHeight = 48;
         private const int headerHeight = 48;
@@ -19,7 +19,7 @@ namespace Toggl.Daneel.ViewSources
 
         public SelectUserCalendarsTableViewSource(
             UITableView tableView,
-            IReadOnlyList<IReadOnlyList<SelectableUserCalendarViewModel>> items
+            ObservableGroupedOrderedCollection<SelectableUserCalendarViewModel> items
         )
             : base(items, cellIdentifier)
         {
@@ -36,7 +36,7 @@ namespace Toggl.Daneel.ViewSources
         public override UIView GetViewForHeader(UITableView tableView, nint section)
         {
             var header = (UserCalendarListHeaderViewCell)tableView.DequeueReusableHeaderFooterView(headerIdentifier);
-            header.Item = ((UserCalendarCollection)items[(int)section]).SourceTitle;
+            header.Item = collection[(int)section].First().SourceName;
             return header;
         }
 
