@@ -2,7 +2,7 @@
 
 namespace Toggl.Foundation.MvvmCross.ViewModels.Selectable
 {
-    public sealed class SelectableCalendarViewModel
+    public sealed class SelectableUserCalendarViewModel
     {
         public string Id { get; }
 
@@ -10,7 +10,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Selectable
 
         public bool Selected { get; set; }
 
-        public SelectableCalendarViewModel(UserCalendar calendar, bool selected)
+        public SelectableUserCalendarViewModel(UserCalendar calendar, bool selected)
         {
             Ensure.Argument.IsNotNull(calendar, nameof(calendar));
 

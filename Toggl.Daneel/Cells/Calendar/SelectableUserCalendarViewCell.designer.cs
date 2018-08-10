@@ -7,7 +7,7 @@
 using Foundation;
 using System.CodeDom.Compiler;
 
-namespace Toggl.Daneel.Views.Calendar
+namespace Toggl.Daneel.Cells.Calendar
 {
 	[Register ("SelectableUserCalendarViewCell")]
 	partial class SelectableUserCalendarViewCell

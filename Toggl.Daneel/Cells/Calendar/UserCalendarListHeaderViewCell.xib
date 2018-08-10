@@ -32,6 +32,7 @@
                         </constraints>
                     </view>
                 </subviews>
+                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 <constraints>
                     <constraint firstAttribute="bottom" secondItem="Phd-2U-gpo" secondAttribute="bottom" id="83E-Qu-lro"/>
                     <constraint firstItem="Phd-2U-gpo" firstAttribute="leading" secondItem="YTl-1W-gDM" secondAttribute="leading" id="C9e-9g-3cY"/>

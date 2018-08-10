@@ -34,7 +34,7 @@ namespace Toggl.Daneel.Services
         public IObservable<IEnumerable<UserCalendar>> UserCalendars
             => Observable.DeferAsync(async (cancellactionToken) =>
                 {
-                    var isAuthorized = await permissionsService.CalendarAuthorizationStatus;
+                    var isAuthorized = await permissionsService.CalendarAuthorizationStatus.FirstAsync();
                     if (!isAuthorized)
                     {
                         return Observable.Throw<IEnumerable<UserCalendar>>(

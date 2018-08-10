@@ -14,22 +14,22 @@ using Toggl.Multivac.Extensions;
 namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
 {
     [Preserve(AllMembers = true)]
-    public sealed class SelectCalendarsViewModel : MvxViewModel
+    public sealed class SelectUserCalendarsViewModel : MvxViewModel
     {
         private readonly IInteractorFactory interactorFactory;
 
-        public NestableObservableCollection<UserCalendarCollection, SelectableCalendarViewModel> Calendars { get; }
-            = new NestableObservableCollection<UserCalendarCollection, SelectableCalendarViewModel>();
+        public NestableObservableCollection<UserCalendarCollection, SelectableUserCalendarViewModel> Calendars { get; }
+            = new NestableObservableCollection<UserCalendarCollection, SelectableUserCalendarViewModel>();
 
-        public InputAction<SelectableCalendarViewModel> SelectCalendarAction { get; }
+        public InputAction<SelectableUserCalendarViewModel> SelectCalendarAction { get; }
 
-        public SelectCalendarsViewModel(IInteractorFactory interactorFactory)
+        public SelectUserCalendarsViewModel(IInteractorFactory interactorFactory)
         {
             Ensure.Argument.IsNotNull(interactorFactory, nameof(interactorFactory));
 
             this.interactorFactory = interactorFactory;
 
-            SelectCalendarAction = new InputAction<SelectableCalendarViewModel>(selectCalendar);
+            SelectCalendarAction = new InputAction<SelectableUserCalendarViewModel>(selectCalendar);
         }
 
         public override async Task Initialize()
@@ -39,6 +39,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
             var userCalendarCollections = await interactorFactory
                 .GetUserCalendars()
                 .Execute()
+                .Do(test)
                 .Select(calendars => calendars
                         .OrderBy(calendar => calendar.Name)
                         .GroupBy(calendar => calendar.SourceName)
@@ -46,6 +47,11 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
                 .Select(createCalendarCollections);
 
             Calendars.AddRange(userCalendarCollections);
+        }
+
+        private void test(IEnumerable<UserCalendar> c)
+        {
+            Console.WriteLine(c);
         }
 
         private IEnumerable<UserCalendarCollection> createCalendarCollections(
@@ -58,10 +64,10 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
                 groupedCalendars.Select(toSelectable)
             );
 
-        private SelectableCalendarViewModel toSelectable(UserCalendar calendar)
-            => new SelectableCalendarViewModel(calendar, false);
+        private SelectableUserCalendarViewModel toSelectable(UserCalendar calendar)
+            => new SelectableUserCalendarViewModel(calendar, false);
 
-        IObservable<Unit> selectCalendar(SelectableCalendarViewModel arg)
+        IObservable<Unit> selectCalendar(SelectableUserCalendarViewModel arg)
         {
             throw new NotImplementedException();
         }

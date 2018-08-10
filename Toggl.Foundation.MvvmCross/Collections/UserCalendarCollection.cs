@@ -6,11 +6,11 @@ using Toggl.Multivac;
 namespace Toggl.Foundation.MvvmCross.Collections
 {
     public sealed class UserCalendarCollection
-        : MvxObservableCollection<SelectableCalendarViewModel>
+        : MvxObservableCollection<SelectableUserCalendarViewModel>
     {
         public string SourceTitle { get; }
 
-        public UserCalendarCollection(string sourceTitle, IEnumerable<SelectableCalendarViewModel> items)
+        public UserCalendarCollection(string sourceTitle, IEnumerable<SelectableUserCalendarViewModel> items)
             : base(items)
         {
             Ensure.Argument.IsNotNull(items, nameof(items));

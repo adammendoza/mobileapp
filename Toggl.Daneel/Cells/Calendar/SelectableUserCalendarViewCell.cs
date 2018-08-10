@@ -1,14 +1,13 @@
 ﻿using System;
 using Foundation;
-using MvvmCross.Binding.BindingContext;
-using MvvmCross.Platforms.Ios.Binding.Views;
 using Toggl.Daneel.Extensions;
 using Toggl.Foundation.MvvmCross.ViewModels.Selectable;
 using UIKit;
 
-namespace Toggl.Daneel.Views.Calendar
+namespace Toggl.Daneel.Cells.Calendar
 {
-    public sealed partial class SelectableUserCalendarViewCell : MvxTableViewCell
+    public sealed partial class SelectableUserCalendarViewCell
+        : BaseTableViewCell<SelectableUserCalendarViewModel>
     {
         public static readonly NSString Key = new NSString(nameof(SelectableUserCalendarViewCell));
         public static readonly UINib Nib;
@@ -27,22 +26,13 @@ namespace Toggl.Daneel.Views.Calendar
         {
             base.AwakeFromNib();
 
-            prepareViews();
-
-            this.DelayBind(() =>
-            {
-                var bindingSet = this.CreateBindingSet<SelectableUserCalendarViewCell, SelectableCalendarViewModel>();
-
-                bindingSet.Bind(CalendarNameLabel).To(vm => vm.Name);
-                bindingSet.Bind(IsSelectedSwitch).To(vm => vm.Selected);
-
-                bindingSet.Apply();
-            });
+            IsSelectedSwitch.Resize();
         }
 
-        private void prepareViews()
+        protected override void UpdateView()
         {
-            IsSelectedSwitch.Resize();
+            CalendarNameLabel.Text = Item.Name;
+            IsSelectedSwitch.Selected = Item.Selected;
         }
     }
 }

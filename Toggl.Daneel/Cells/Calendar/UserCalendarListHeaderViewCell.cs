@@ -1,12 +1,10 @@
 ﻿using System;
 using Foundation;
-using MvvmCross.Binding.BindingContext;
-using MvvmCross.Platforms.Ios.Binding.Views;
 using UIKit;
 
-namespace Toggl.Daneel.Views.Calendar
+namespace Toggl.Daneel.Cells.Calendar
 {
-    public sealed partial class UserCalendarListHeaderViewCell : MvxTableViewHeaderFooterView
+    public sealed partial class UserCalendarListHeaderViewCell : BaseTableHeaderFooterView<string>
     {
         public static readonly NSString Key = new NSString(nameof(UserCalendarListHeaderViewCell));
         public static readonly UINib Nib;
@@ -21,18 +19,9 @@ namespace Toggl.Daneel.Views.Calendar
             // Note: this .ctor should not contain any initialization logic.
         }
 
-        public override void AwakeFromNib()
+        protected override void UpdateView()
         {
-            base.AwakeFromNib();
-
-            this.DelayBind(() =>
-            {
-                var bindingSet = this.CreateBindingSet<UserCalendarListHeaderViewCell, string>();
-
-                bindingSet.Bind(TitleLabel).To(vm => vm);
-
-                bindingSet.Apply();
-            });
+            TitleLabel.Text = Item;
         }
     }
 }

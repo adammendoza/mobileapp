@@ -603,8 +603,9 @@
     <InterfaceDefinition Include="ViewControllers\CalendarViewController.xib" />
     <InterfaceDefinition Include="Views\SnackBar.xib" />
     <InterfaceDefinition Include="Views\Calendar\CalendarItemView.xib" />
-    <InterfaceDefinition Include="Views\Calendar\SelectableUserCalendarViewCell.xib" />
-    <InterfaceDefinition Include="Views\Calendar\UserCalendarListHeaderViewCell.xib" />
+    <InterfaceDefinition Include="ViewControllers\Calendar\SelectUserCalendarsViewController.xib" />
+    <InterfaceDefinition Include="Cells\Calendar\SelectableUserCalendarViewCell.xib" />
+    <InterfaceDefinition Include="Cells\Calendar\UserCalendarListHeaderViewCell.xib" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -1034,12 +1035,17 @@
     <Compile Include="Views\Calendar\CalendarItemView.designer.cs">
       <DependentUpon>CalendarItemView.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\Calendar\SelectableUserCalendarViewCell.cs" />
-    <Compile Include="Views\Calendar\SelectableUserCalendarViewCell.designer.cs">
+    <Compile Include="ViewControllers\Calendar\SelectUserCalendarsViewController.cs" />
+    <Compile Include="ViewControllers\Calendar\SelectUserCalendarsViewController.designer.cs">
+      <DependentUpon>SelectUserCalendarsViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewSources\SelectUserCalendarsTableViewSource.cs" />
+    <Compile Include="Cells\Calendar\SelectableUserCalendarViewCell.cs" />
+    <Compile Include="Cells\Calendar\SelectableUserCalendarViewCell.designer.cs">
       <DependentUpon>SelectableUserCalendarViewCell.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\Calendar\UserCalendarListHeaderViewCell.cs" />
-    <Compile Include="Views\Calendar\UserCalendarListHeaderViewCell.designer.cs">
+    <Compile Include="Cells\Calendar\UserCalendarListHeaderViewCell.cs" />
+    <Compile Include="Cells\Calendar\UserCalendarListHeaderViewCell.designer.cs">
       <DependentUpon>UserCalendarListHeaderViewCell.cs</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -1100,6 +1106,8 @@
     <Folder Include="Resources\Images.xcassets\icCalendar.imageset\" />
     <Folder Include="Resources\Images.xcassets\icIllustrationErrorWorkspace.imageset\" />
     <Folder Include="Views\Calendar\" />
+    <Folder Include="ViewControllers\Calendar\" />
+    <Folder Include="Cells\Calendar\" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="GoogleService-Info.plist" />
