@@ -604,6 +604,7 @@
     <InterfaceDefinition Include="Views\SnackBar.xib" />
     <InterfaceDefinition Include="Views\Calendar\CalendarItemView.xib" />
     <InterfaceDefinition Include="Views\Calendar\SelectableUserCalendarViewCell.xib" />
+    <InterfaceDefinition Include="Views\Calendar\UserCalendarListHeaderViewCell.xib" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -1036,6 +1037,10 @@
     <Compile Include="Views\Calendar\SelectableUserCalendarViewCell.cs" />
     <Compile Include="Views\Calendar\SelectableUserCalendarViewCell.designer.cs">
       <DependentUpon>SelectableUserCalendarViewCell.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Calendar\UserCalendarListHeaderViewCell.cs" />
+    <Compile Include="Views\Calendar\UserCalendarListHeaderViewCell.designer.cs">
+      <DependentUpon>UserCalendarListHeaderViewCell.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
