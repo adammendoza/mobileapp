@@ -1,9 +1,7 @@
-﻿using System;
-using CoreGraphics;
+﻿using CoreGraphics;
 using Toggl.Daneel.Presentation.Attributes;
 using Toggl.Daneel.ViewSources;
 using Toggl.Foundation.MvvmCross.ViewModels.Calendar;
-using UIKit;
 
 namespace Toggl.Daneel.ViewControllers.Calendar
 {
@@ -14,6 +12,7 @@ namespace Toggl.Daneel.ViewControllers.Calendar
         private const int heightAboveTableView = 98;
         private const int heightBelowTableView = 80;
         private const int maxHeight = 627;
+        private const int width = 288;
 
         public SelectUserCalendarsViewController() : base(null)
         {
@@ -25,31 +24,30 @@ namespace Toggl.Daneel.ViewControllers.Calendar
 
             var source = new SelectUserCalendarsTableViewSource(TableView, ViewModel.Calendars);
             TableView.Source = source;
-
-            PreferredContentSize = new CGSize(288, 458);
-            var a = View.SizeThatFits(View.Frame.Size);
-            var b = View.IntrinsicContentSize;
-            var c = View.Frame;
-            var d = TableView.ContentSize;
-            Console.WriteLine();
         }
 
         public override void ViewDidLayoutSubviews()
         {
             base.ViewDidLayoutSubviews();
 
-            var targetHeight = heightAboveTableView + heightBelowTableView + TableView.ContentSize.Height;
-            var actualHeight = targetHeight > maxHeight
-                ? maxHeight
-                : targetHeight;
+            setDialogSize();
+        }
 
+        private void setDialogSize()
+        {
+            var targetHeight = calculateTargetHeight();
             PreferredContentSize = new CGSize(
-                288,
-                actualHeight
+                width,
+                targetHeight > maxHeight ? maxHeight : targetHeight
             );
 
-            if (actualHeight <= maxHeight)
-                TableView.ScrollEnabled = false;
+            //Implementation in ModalPresentationController
+            View.Frame = PresentationController.FrameOfPresentedViewInContainerView;
+
+            TableView.ScrollEnabled = targetHeight > maxHeight;
         }
+
+        private int calculateTargetHeight()
+            => heightAboveTableView + heightBelowTableView + (int)TableView.ContentSize.Height;
     }
 }
