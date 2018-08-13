@@ -15,7 +15,7 @@ using Toggl.Multivac.Extensions;
 namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
 {
     [Preserve(AllMembers = true)]
-    public sealed class SelectUserCalendarsViewModel : MvxViewModelResult<List<string>>
+    public sealed class SelectUserCalendarsViewModel : MvxViewModelResult<string[]>
     {
         private readonly IInteractorFactory interactorFactory;
         private readonly IMvxNavigationService navigationService;
@@ -74,7 +74,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
 
         private IObservable<Unit> done()
             => Observable
-                .FromAsync(async () => await navigationService.Close(this, selectedCalendarIds.ToList()))
+            .FromAsync(async () => await navigationService.Close(this, selectedCalendarIds.ToArray()))
                 .SelectUnit();
     }
 }

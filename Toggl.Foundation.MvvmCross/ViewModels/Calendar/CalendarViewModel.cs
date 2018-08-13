@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
@@ -22,6 +23,8 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
         private readonly IOnboardingStorage onboardingStorage;
         private readonly IPermissionsService permissionsService;
         private readonly IMvxNavigationService navigationService;
+
+        private readonly ISubject<bool> shouldShowOnboardingSubject;
 
         public IObservable<bool> ShouldShowOnboarding { get; }
 
@@ -50,8 +53,9 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
             this.navigationService = navigationService;
             this.permissionsService = permissionsService;
 
-            ShouldShowOnboarding = Observable
-                .Return(!onboardingStorage.CompletedCalendarOnboarding());
+            var isCompleted = onboardingStorage.CompletedCalendarOnboarding();
+            shouldShowOnboardingSubject = new BehaviorSubject<bool>(!isCompleted);
+            ShouldShowOnboarding = shouldShowOnboardingSubject.AsObservable();
             
             OnItemTapped = new RxAction<CalendarItem, Unit>(onItemTapped);
 
@@ -72,16 +76,28 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
         private IObservable<Unit> getStarted()
             => permissionsService
                 .RequestCalendarAuthorization()
-                .Do(handlePermissionRequestResult)
-                .SelectUnit();
+                .SelectMany(handlePermissionRequestResult);
 
-        private void handlePermissionRequestResult(bool permissionGranted)
-        {
-            if (permissionGranted)
-                navigationService.Navigate<SelectUserCalendarsViewModel>();
-            else
-                navigationService.Navigate<CalendarPermissionDeniedViewModel>();
-        }
+        private IObservable<Unit> handlePermissionRequestResult(bool permissionGranted)
+            => Observable.FromAsync(async () =>
+            {
+                if (permissionGranted)
+                {
+                    var calendarIds = await navigationService.Navigate<SelectUserCalendarsViewModel, string[]>();
+                    interactorFactory.SetEnabledCalendars(calendarIds).Execute();
+                    onboardingStorage.SetCompletedCalendarOnboarding();
+                    shouldShowOnboardingSubject.OnNext(false);
+                }
+                else
+                {
+                    var shouldFinishOnboarding = await navigationService.Navigate<CalendarPermissionDeniedViewModel, bool>();
+                    if (shouldFinishOnboarding)
+                    {
+                        onboardingStorage.SetCompletedCalendarOnboarding();
+                        shouldShowOnboardingSubject.OnNext(false);
+                    }
+                }
+            }).SelectUnit();
 
         private IObservable<Unit> onItemTapped(CalendarItem calendarItem)
             => Observable.FromAsync(async cancellationToken =>
