@@ -17,7 +17,6 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
     {
         private readonly IInteractorFactory interactorFactory;
 
-
         public ObservableGroupedOrderedCollection<SelectableUserCalendarViewModel> Calendars { get; }
             = new ObservableGroupedOrderedCollection<SelectableUserCalendarViewModel>(
                 indexKey: c => c.Id,

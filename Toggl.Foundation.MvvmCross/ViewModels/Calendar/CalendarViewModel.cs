@@ -78,7 +78,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
         private void handlePermissionRequestResult(bool permissionGranted)
         {
             if (permissionGranted)
-                Console.WriteLine("Great success");
+                navigationService.Navigate<SelectUserCalendarsViewModel>();
             else
                 navigationService.Navigate<CalendarPermissionDeniedViewModel>();
         }

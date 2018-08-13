@@ -26,13 +26,17 @@ namespace Toggl.Daneel.Cells.Calendar
         {
             base.AwakeFromNib();
 
+            //This way the tap "goes through" the UISwitch
+            //and we only have to handle the tap event on the whole cell.
+            IsSelectedSwitch.UserInteractionEnabled = false;
+
             IsSelectedSwitch.Resize();
         }
 
         protected override void UpdateView()
         {
             CalendarNameLabel.Text = Item.Name;
-            IsSelectedSwitch.Selected = Item.Selected;
+            IsSelectedSwitch.SetState(Item.Selected, true);
         }
     }
 }

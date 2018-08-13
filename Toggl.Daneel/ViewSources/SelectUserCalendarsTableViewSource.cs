@@ -43,6 +43,10 @@ namespace Toggl.Daneel.ViewSources
         public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
         {
             base.RowSelected(tableView, indexPath);
+
+            var cell = (SelectableUserCalendarViewCell)tableView.CellAt(indexPath);
+            cell.Item = cell.Item.InvertSelected();
+
             tableView.DeselectRow(indexPath, true);
         }
     }

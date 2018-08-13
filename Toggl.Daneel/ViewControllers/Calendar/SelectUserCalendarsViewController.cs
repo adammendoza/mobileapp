@@ -1,6 +1,7 @@
 ﻿using CoreGraphics;
 using Toggl.Daneel.Presentation.Attributes;
 using Toggl.Daneel.ViewSources;
+using Toggl.Foundation.MvvmCross.ViewModels;
 using Toggl.Foundation.MvvmCross.ViewModels.Calendar;
 
 namespace Toggl.Daneel.ViewControllers.Calendar
@@ -24,6 +25,8 @@ namespace Toggl.Daneel.ViewControllers.Calendar
 
             var source = new SelectUserCalendarsTableViewSource(TableView, ViewModel.Calendars);
             TableView.Source = source;
+
+            this.Bind(source.ItemSelected, ViewModel.SelectCalendarAction);
         }
 
         public override void ViewDidLayoutSubviews()
