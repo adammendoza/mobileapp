@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using Toggl.Foundation.Interactors;
 using Toggl.Foundation.MvvmCross.Collections;
@@ -13,9 +15,12 @@ using Toggl.Multivac.Extensions;
 namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
 {
     [Preserve(AllMembers = true)]
-    public sealed class SelectUserCalendarsViewModel : MvxViewModel
+    public sealed class SelectUserCalendarsViewModel : MvxViewModelResult<List<string>>
     {
         private readonly IInteractorFactory interactorFactory;
+        private readonly IMvxNavigationService navigationService;
+
+        private readonly HashSet<string> selectedCalendarIds = new HashSet<string>();
 
         public ObservableGroupedOrderedCollection<SelectableUserCalendarViewModel> Calendars { get; }
             = new ObservableGroupedOrderedCollection<SelectableUserCalendarViewModel>(
@@ -24,15 +29,22 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
                 groupingKey: c => c.SourceName
             );
 
+        public UIAction DoneAction { get; }
+
         public InputAction<SelectableUserCalendarViewModel> SelectCalendarAction { get; }
 
-        public SelectUserCalendarsViewModel(IInteractorFactory interactorFactory)
+        public SelectUserCalendarsViewModel(
+            IInteractorFactory interactorFactory,
+            IMvxNavigationService navigationService)
         {
             Ensure.Argument.IsNotNull(interactorFactory, nameof(interactorFactory));
+            Ensure.Argument.IsNotNull(navigationService, nameof(navigationService));
 
             this.interactorFactory = interactorFactory;
+            this.navigationService = navigationService;
 
             SelectCalendarAction = new InputAction<SelectableUserCalendarViewModel>(selectCalendar);
+            DoneAction = new UIAction(done);
         }
 
         public override async Task Initialize()
@@ -44,16 +56,25 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
                 .Execute()
                 .Select(calendars => calendars.Select(toSelectable))
                 .Do(calendars => calendars
-                    .ForEach(calendar => Calendars.InsertItem(calendar)));
+                .ForEach(calendar => Calendars.InsertItem(calendar)));
         }
 
         private SelectableUserCalendarViewModel toSelectable(UserCalendar calendar)
             => new SelectableUserCalendarViewModel(calendar, false);
 
-        IObservable<Unit> selectCalendar(SelectableUserCalendarViewModel calendar)
+        private IObservable<Unit> selectCalendar(SelectableUserCalendarViewModel calendar)
         {
-            Console.WriteLine($"Selected {calendar.Name}");
+            if (selectedCalendarIds.Contains(calendar.Id))
+                selectedCalendarIds.Remove(calendar.Id);
+            else
+                selectedCalendarIds.Add(calendar.Id);
+
             return Observable.Return(Unit.Default);
         }
+
+        private IObservable<Unit> done()
+            => Observable
+                .FromAsync(async () => await navigationService.Close(this, selectedCalendarIds.ToList()))
+                .SelectUnit();
     }
 }
