@@ -1,42 +1,45 @@
 // WARNING
 //
-// This file has been generated automatically by Visual Studio to store outlets and
-// actions made in the UI designer. If it is removed, they will be lost.
-// Manual changes to this file may not be handled correctly.
+// This file has been generated automatically by Visual Studio from the outlets and
+// actions declared in your storyboard file.
+// Manual changes to this file will not be maintained.
 //
 using Foundation;
+using System;
 using System.CodeDom.Compiler;
 
 namespace Toggl.Daneel.ViewControllers
 {
-	[Register ("TermsOfServiceViewController")]
-	partial class TermsOfServiceViewController
-	{
-		[Outlet]
-		UIKit.UIButton AcceptButton { get; set; }
+    [Register ("TermsOfServiceViewController")]
+    partial class TermsOfServiceViewController
+    {
+        [Outlet]
+        UIKit.UIButton AcceptButton { get; set; }
 
-		[Outlet]
-		UIKit.UIButton CloseButton { get; set; }
 
-		[Outlet]
-		UIKit.UITextView TextView { get; set; }
-		
-		void ReleaseDesignerOutlets ()
-		{
-			if (AcceptButton != null) {
-				AcceptButton.Dispose ();
-				AcceptButton = null;
-			}
+        [Outlet]
+        UIKit.UIButton CloseButton { get; set; }
 
-			if (CloseButton != null) {
-				CloseButton.Dispose ();
-				CloseButton = null;
-			}
 
-			if (TextView != null) {
-				TextView.Dispose ();
-				TextView = null;
-			}
-		}
-	}
+        [Outlet]
+        UIKit.UITextView TextView { get; set; }
+
+        void ReleaseDesignerOutlets ()
+        {
+            if (AcceptButton != null) {
+                AcceptButton.Dispose ();
+                AcceptButton = null;
+            }
+
+            if (CloseButton != null) {
+                CloseButton.Dispose ();
+                CloseButton = null;
+            }
+
+            if (TextView != null) {
+                TextView.Dispose ();
+                TextView = null;
+            }
+        }
+    }
 }

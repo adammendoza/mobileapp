@@ -147,7 +147,6 @@ namespace Toggl.Daneel.ViewControllers
             bindingSet.Bind(settingsButton).To(vm => vm.OpenSettingsCommand);
             bindingSet.Bind(StopTimeEntryButton).To(vm => vm.StopTimeEntryCommand);
             bindingSet.Bind(StartTimeEntryButton).To(vm => vm.StartTimeEntryCommand);
-            bindingSet.Bind(EditTimeEntryButton).To(vm => vm.EditTimeEntryCommand);
             bindingSet.Bind(syncFailuresButton).To(vm => vm.OpenSyncFailuresCommand);
 
             bindingSet.Bind(CurrentTimeEntryCard)
