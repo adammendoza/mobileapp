@@ -1,36 +1,34 @@
 // WARNING
 //
-// This file has been generated automatically by Visual Studio from the outlets and
-// actions declared in your storyboard file.
-// Manual changes to this file will not be maintained.
+// This file has been generated automatically by Visual Studio to store outlets and
+// actions made in the UI designer. If it is removed, they will be lost.
+// Manual changes to this file may not be handled correctly.
 //
 using Foundation;
-using System;
 using System.CodeDom.Compiler;
 
 namespace Toggl.Daneel.Cells.Settings
 {
-    [Register ("LicensesViewCell")]
-    partial class LicensesViewCell
-    {
-        [Outlet]
-        UIKit.UIView GrayBackground { get; set; }
+	[Register ("LicensesViewCell")]
+	partial class LicensesViewCell
+	{
+		[Outlet]
+		UIKit.UIView GrayBackground { get; set; }
 
+		[Outlet]
+		UIKit.UILabel LicenseLabel { get; set; }
+		
+		void ReleaseDesignerOutlets ()
+		{
+			if (LicenseLabel != null) {
+				LicenseLabel.Dispose ();
+				LicenseLabel = null;
+			}
 
-        [Outlet]
-        UIKit.UILabel LicenseLabel { get; set; }
-
-        void ReleaseDesignerOutlets ()
-        {
-            if (GrayBackground != null) {
-                GrayBackground.Dispose ();
-                GrayBackground = null;
-            }
-
-            if (LicenseLabel != null) {
-                LicenseLabel.Dispose ();
-                LicenseLabel = null;
-            }
-        }
-    }
+			if (GrayBackground != null) {
+				GrayBackground.Dispose ();
+				GrayBackground = null;
+			}
+		}
+	}
 }

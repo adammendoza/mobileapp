@@ -16,11 +16,19 @@ namespace Toggl.Daneel.ViewControllers
     {
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UIImageView BackgroundImage { get; set; }
+        UIKit.UILabel FirstPageLabel { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UILabel FirstPageLabel { get; set; }
+        UIKit.UILabel JumbotronLabel { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIView LastPageItems { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIButton Login { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
@@ -52,22 +60,40 @@ namespace Toggl.Daneel.ViewControllers
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIButton SignUp { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UIButton Skip { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UILabel ThirdPageLabel { get; set; }
 
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIImageView BackgroundImage { get; set; }
+
         void ReleaseDesignerOutlets ()
         {
-            if (BackgroundImage != null) {
-                BackgroundImage.Dispose ();
-                BackgroundImage = null;
-            }
-
             if (FirstPageLabel != null) {
                 FirstPageLabel.Dispose ();
                 FirstPageLabel = null;
+            }
+
+            if (JumbotronLabel != null) {
+                JumbotronLabel.Dispose ();
+                JumbotronLabel = null;
+            }
+
+            if (LastPageItems != null) {
+                LastPageItems.Dispose ();
+                LastPageItems = null;
+            }
+
+            if (Login != null) {
+                Login.Dispose ();
+                Login = null;
             }
 
             if (Next != null) {
@@ -105,6 +131,11 @@ namespace Toggl.Daneel.ViewControllers
                 SecondPageLabel = null;
             }
 
+            if (SignUp != null) {
+                SignUp.Dispose ();
+                SignUp = null;
+            }
+
             if (Skip != null) {
                 Skip.Dispose ();
                 Skip = null;
@@ -114,6 +145,11 @@ namespace Toggl.Daneel.ViewControllers
                 ThirdPageLabel.Dispose ();
                 ThirdPageLabel = null;
             }
+
+			if (BackgroundImage != null) {
+				BackgroundImage.Dispose ();
+				BackgroundImage = null;
+			}
         }
     }
 }
