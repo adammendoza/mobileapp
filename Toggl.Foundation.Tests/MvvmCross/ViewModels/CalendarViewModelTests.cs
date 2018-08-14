@@ -63,7 +63,10 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
             [Fact, LogIfTooSlow]
             public async Task ReturnsTrueIfCalendarOnboardingHasntBeenCompleted()
             {
-                (await ViewModel.ShouldShowOnboarding).Should().BeTrue();
+                OnboardingStorage.CompletedCalendarOnboarding().Returns(false);
+                var viewModel = CreateViewModel();
+
+                (await viewModel.ShouldShowOnboarding.FirstAsync()).Should().BeTrue();
             }
 
             [Fact, LogIfTooSlow]
@@ -72,7 +75,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                 OnboardingStorage.CompletedCalendarOnboarding().Returns(true);
                 var viewModel = CreateViewModel();
 
-                (await viewModel.ShouldShowOnboarding).Should().BeFalse();
+                (await viewModel.ShouldShowOnboarding.FirstAsync()).Should().BeFalse();
             }
         }
 
@@ -93,7 +96,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
 
                 await ViewModel.GetStartedAction.Execute(Unit.Default);
 
-                await NavigationService.Received().Navigate<CalendarPermissionDeniedViewModel>();
+                await NavigationService.Received().Navigate<CalendarPermissionDeniedViewModel, bool>();
             }
         }
 
