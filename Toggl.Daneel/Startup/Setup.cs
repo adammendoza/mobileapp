@@ -92,6 +92,7 @@ namespace Toggl.Daneel
             var remoteConfigService = new RemoteConfigService();
             remoteConfigService.SetupDefaults(remoteConfigDefaultsFileName);
             var schedulerProvider = new IOSSchedulerProvider();
+            var platformInfo = new PlatformInfo { Platform = Platform.Daneel };
 
             var foundation =
                 TogglFoundation
@@ -112,6 +113,7 @@ namespace Toggl.Daneel
                     .WithBackgroundService(new BackgroundService(timeService))
                     .WithApplicationShortcutCreator<ApplicationShortcutCreator>()
                     .WithSuggestionProviderContainer(suggestionProviderContainer)
+                    .WithPlatformInfo(platformInfo)
 
                     .StartRegisteringPlatformServices()
                     .WithDialogService(dialogService)

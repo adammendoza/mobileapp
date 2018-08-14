@@ -36,6 +36,7 @@ namespace Toggl.Foundation.MvvmCross
         public IApplicationShortcutCreator ShortcutCreator { get; }
         public ISuggestionProviderContainer SuggestionProviderContainer { get; }
 
+        public PlatformInfo PlatformInfo { get; }
         public IDialogService DialogService { get; }
         public IBrowserService BrowserService { get; }
         public IKeyValueStorage KeyValueStorage { get; }
@@ -71,6 +72,7 @@ namespace Toggl.Foundation.MvvmCross
             ApiFactory = builder.Foundation.ApiFactory;
             TimeService = builder.Foundation.TimeService;
             MailService = builder.Foundation.MailService;
+            PlatformInfo = builder.Foundation.PlatformInfo;
             RatingService = builder.Foundation.RatingService;
             GoogleService = builder.Foundation.GoogleService;
             ApiEnvironment = builder.Foundation.ApiEnvironment;

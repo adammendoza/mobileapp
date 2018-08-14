@@ -83,6 +83,7 @@ namespace Toggl.Giskard
             var settingsStorage = new SettingsStorage(appVersion, keyValueStorage);
             var feedbackService = new FeedbackService(userAgent, mailService, dialogService, platformConstants);
             var schedulerProvider = new AndroidSchedulerProvider();
+            var platformInfo = new PlatformInfo { Platform = Platform.Giskard };
 
             var foundation =
                 TogglFoundation
@@ -103,6 +104,7 @@ namespace Toggl.Giskard
                     .WithBackgroundService(new BackgroundService(timeService))
                     .WithSuggestionProviderContainer(suggestionProviderContainer)
                     .WithApplicationShortcutCreator(new ApplicationShortcutCreator(ApplicationContext))
+                    .WithPlatformInfo(platformInfo)
 
                     .StartRegisteringPlatformServices()
                     .WithDialogService(dialogService)
