@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
@@ -255,7 +254,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels
 
             onboardingStorage.SetIsNewUser(false);
 
-            await navigationService.Navigate<MainTabBarViewModel>();
+            await navigationService.ForkNavigate<MainTabBarViewModel, MainViewModel>();
         }
 
         private void onError(Exception exception)

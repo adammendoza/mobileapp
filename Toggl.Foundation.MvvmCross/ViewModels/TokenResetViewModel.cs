@@ -6,6 +6,7 @@ using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using Toggl.Foundation.Analytics;
 using Toggl.Foundation.DataSources;
+using Toggl.Foundation.Extensions;
 using Toggl.Foundation.Login;
 using Toggl.Foundation.MvvmCross.Services;
 using Toggl.Multivac;
@@ -124,7 +125,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels
 
             IsLoading = false;
 
-            navigationService.Navigate<MainTabBarViewModel>();
+            navigationService.ForkNavigate<MainTabBarViewModel, MainViewModel>();
         }
 
         private void onError(Exception ex)
