@@ -3,62 +3,69 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using EventKit;
+using Toggl.Daneel.Extensions;
 using Toggl.Foundation.Calendar;
 using Toggl.Foundation.MvvmCross.Services;
-using Toggl.Foundation.Services;
 using Toggl.Multivac;
-using Toggl.PrimeRadiant.Settings;
 
 namespace Toggl.Daneel.Services
 {
-    public sealed class CalendarService : ICalendarService
+    public sealed class CalendarService : BaseCalendarService
     {
-        private readonly IUserPreferences userPreferences;
-        private readonly IPermissionsService permissionsService;
         private readonly EKEventStore eventStore = new EKEventStore();
 
-        public CalendarService(
-            IUserPreferences userPreferences,
-            IPermissionsService permissionsService)
+        public CalendarService(IPermissionsService permissionsService)
+            : base (permissionsService)
         {
-            Ensure.Argument.IsNotNull(userPreferences, nameof(userPreferences));
-            Ensure.Argument.IsNotNull(permissionsService, nameof(permissionsService));
-
-            this.userPreferences = userPreferences;
-            this.permissionsService = permissionsService;
         }
 
-        public IObservable<IEnumerable<CalendarItem>> GetEventsForDate(DateTime date)
-            => Observable.Return(new List<CalendarItem>());
+        public override IObservable<IEnumerable<CalendarItem>> GetEventsForDate(DateTime date)
+        {
+            var startOfDay = new DateTimeOffset(date.Date);
+            var startDate = startOfDay.ToNSDate();
+            var endDate = startOfDay.AddDays(1).ToNSDate();
 
-        public IObservable<IEnumerable<UserCalendar>> UserCalendars
-            => Observable.Defer(() =>
-                {
-                    var isAuthorized = permissionsService.CalendarPermissionGranted;
-                    if (!isAuthorized)
-                    {
-                        return Observable.Throw<IEnumerable<UserCalendar>>(
-                            new NotAuthorizedException("You don't have permission to access calendars")
-                        );
-                    }
+            var calendars = eventStore.GetCalendars(EKEntityType.Event);
 
-                    var enabledIds = userPreferences.EnabledCalendarIds().ToHashSet();
-                    return Observable.Return(selectCalendars(enabledIds));
-                });
+            var predicate = eventStore
+                .PredicateForEvents(startDate, endDate, calendars);
 
-        private IEnumerable<UserCalendar> selectCalendars(HashSet<string> selectedIds)
+            var calendarItems = eventStore
+                .EventsMatching(predicate)
+                .Where(isValidEvent)
+                .Select(calendarItemFromEvent);
+
+            return Observable.Return(calendarItems);
+        }
+
+        protected override IEnumerable<UserCalendar> NativeGetUserCalendars()
             => eventStore
                 .GetCalendars(EKEntityType.Event)
-                .Select(ekCalendar => userCalendarFromEKCalendar(
-                    calendar: ekCalendar,
-                    selected: selectedIds.Contains(ekCalendar.CalendarIdentifier))
-                );
-        
-        private UserCalendar userCalendarFromEKCalendar(EKCalendar calendar, bool selected)
+                .Select(userCalendarFromEKCalendar);
+
+        private UserCalendar userCalendarFromEKCalendar(EKCalendar calendar)
             => new UserCalendar(
                 calendar.CalendarIdentifier,
                 calendar.Title,
-                calendar.Source.Title,
-                selected);
+                calendar.Source.Title);
+
+        private CalendarItem calendarItemFromEvent(EKEvent ev)
+        {
+            var startDate = ev.StartDate.ToDateTimeOffset();
+            var endDate = ev.EndDate.ToDateTimeOffset();
+            var duration = endDate - startDate;
+
+            return new CalendarItem(
+                CalendarItemSource.Calendar,
+                startDate,
+                duration,
+                ev.Title,
+                ev.Calendar.CGColor.ToHexColor(),
+                calendarId: ev.Calendar.CalendarIdentifier
+            );
+        }
+
+        private bool isValidEvent(EKEvent ev)
+            => !ev.AllDay;
     }
 }
