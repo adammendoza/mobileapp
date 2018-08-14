@@ -56,7 +56,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
             {
                 await ViewModel.ContinueWithoutAccessAction.Execute(Unit.Default);
 
-                await NavigationService.Received().Close(ViewModel);
+                await NavigationService.Received().Close(ViewModel, true);
             }
         }
     }
