@@ -10,11 +10,8 @@ using System.CodeDom.Compiler;
 
 namespace Toggl.Daneel.Views
 {
-    [Register ("TimeEntriesEmptyLogView")]
+    [Register(nameof(TimeEntriesEmptyLogView))]
     partial class TimeEntriesEmptyLogView
     {
-        void ReleaseDesignerOutlets ()
-        {
-        }
     }
 }
