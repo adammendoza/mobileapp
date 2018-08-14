@@ -55,8 +55,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
                 .GetUserCalendars()
                 .Execute()
                 .Select(calendars => calendars.Select(toSelectable))
-                .Do(calendars => calendars
-                .ForEach(calendar => Calendars.InsertItem(calendar)));
+                .Do(calendars => calendars.ForEach(calendar => Calendars.InsertItem(calendar)));
         }
 
         private SelectableUserCalendarViewModel toSelectable(UserCalendar calendar)
@@ -74,7 +73,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
 
         private IObservable<Unit> done()
             => Observable
-            .FromAsync(async () => await navigationService.Close(this, selectedCalendarIds.ToArray()))
+                .FromAsync(async () => await navigationService.Close(this, selectedCalendarIds.ToArray()))
                 .SelectUnit();
     }
 }

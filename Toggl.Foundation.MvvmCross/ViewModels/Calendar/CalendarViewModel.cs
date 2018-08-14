@@ -55,7 +55,9 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
 
             var isCompleted = onboardingStorage.CompletedCalendarOnboarding();
             shouldShowOnboardingSubject = new BehaviorSubject<bool>(!isCompleted);
-            ShouldShowOnboarding = shouldShowOnboardingSubject.AsObservable();
+            ShouldShowOnboarding = shouldShowOnboardingSubject
+                .AsObservable()
+                .DistinctUntilChanged();
             
             OnItemTapped = new RxAction<CalendarItem, Unit>(onItemTapped);
 
