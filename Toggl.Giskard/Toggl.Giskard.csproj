@@ -250,6 +250,7 @@
   <ItemGroup>
     <Compile Include="Activities\ForgotPasswordActivity.cs" />
     <Compile Include="Activities\SelectTagsActivity.cs" />
+    <Compile Include="Adapters\ReactiveSectionedRecyclerAdapter.cs" />
     <Compile Include="Adapters\SelectCreatableEntityRecyclerAdapter.cs" />
     <Compile Include="Adapters\SelectTagsRecyclerAdapter.cs" />
     <Compile Include="Activities\SelectProjectActivity.cs" />
