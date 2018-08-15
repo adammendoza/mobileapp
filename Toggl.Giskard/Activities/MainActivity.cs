@@ -36,10 +36,6 @@ namespace Toggl.Giskard.Activities
         private const int snackbarDuration = 5000;
 
         private CompositeDisposable disposeBag;
-        private View runningEntryCardFrame;
-        private FloatingActionButton playButton;
-        private FloatingActionButton stopButton;
-        private CoordinatorLayout coordinatorLayout;
         private PopupWindow playButtonTooltipPopupWindow;
         private PopupWindow stopButtonTooltipPopupWindow;
         private PopupWindow tapToEditPopup;
@@ -56,18 +52,14 @@ namespace Toggl.Giskard.Activities
             SetContentView(Resource.Layout.MainActivity);
             OverridePendingTransition(Resource.Animation.abc_fade_in, Resource.Animation.abc_fade_out);
 
-            initializeViews();
+            InitializeViews();
 
             SetSupportActionBar(FindViewById<Toolbar>(Resource.Id.Toolbar));
             SupportActionBar.SetDisplayShowHomeEnabled(false);
             SupportActionBar.SetDisplayShowTitleEnabled(false);
 
-            runningEntryCardFrame = FindViewById(Resource.Id.MainRunningTimeEntryFrame);
             runningEntryCardFrame.Visibility = ViewStates.Invisible;
 
-            playButton = FindViewById<FloatingActionButton>(Resource.Id.MainPlayButton);
-            stopButton = FindViewById<FloatingActionButton>(Resource.Id.MainStopButton);
-            coordinatorLayout = FindViewById<CoordinatorLayout>(Resource.Id.MainCoordinatorLayout);
 
             disposeBag = new CompositeDisposable();
 
