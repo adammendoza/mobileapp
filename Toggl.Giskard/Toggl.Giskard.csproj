@@ -425,6 +425,9 @@
     <Compile Include="Activities\MainActivity.ViewBinds.cs">
       <DependentUpon>MainActivity.cs</DependentUpon>
     </Compile>
+    <Compile Include="Activities\MainActivity.Onboardings.cs">
+        <DependentUpon>MainActivity.cs</DependentUpon>
+    </Compile>
     <Compile Include="Startup\HandlerScheduler.cs" />
   </ItemGroup>
   <ItemGroup>
