@@ -422,7 +422,6 @@
     </Compile>
     <Compile Include="Views\AutocompleteEditText.cs" />
     <Compile Include="Views\NonSwipingViewPager.cs" />
-    <Compile Include="Activities\MainActivity.ViewBinds.cs" />
     <Compile Include="Activities\MainActivity.ViewBinds.cs">
       <DependentUpon>MainActivity.cs</DependentUpon>
     </Compile>
