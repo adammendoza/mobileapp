@@ -250,6 +250,7 @@
   <ItemGroup>
     <Compile Include="Activities\ForgotPasswordActivity.cs" />
     <Compile Include="Activities\SelectTagsActivity.cs" />
+    <Compile Include="Adapters\MainRecyclerAdapter.cs" />
     <Compile Include="Adapters\MainSuggestionsRecyclerAdapter.cs" />
     <Compile Include="Adapters\ReactiveSectionedRecyclerAdapter.cs" />
     <Compile Include="Adapters\SelectCreatableEntityRecyclerAdapter.cs" />
@@ -287,7 +288,6 @@
     <Compile Include="ViewHolders\MainLogSuggestionsListViewHolder.cs" />
     <Compile Include="Views\SelectProjectRecyclerView.cs" />
     <Compile Include="TemplateSelectors\MainTemplateSelector.cs" />
-    <Compile Include="Adapters\MainRecyclerAdapter.cs" />
     <Compile Include="Views\SelectTagsRecyclerView.cs" />
     <Compile Include="Views\MainRecyclerView.cs" />
     <Compile Include="TemplateSelectors\SelectProjectTemplateSelector.cs" />

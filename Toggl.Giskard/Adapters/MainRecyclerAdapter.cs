@@ -1,118 +1,125 @@
-﻿using System;
-using System.Linq;
+using System;
+using System.Collections.Generic;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Threading.Tasks;
 using Android.Runtime;
 using Android.Support.V7.Widget;
 using Android.Views;
-using MvvmCross.Droid.Support.V7.RecyclerView;
+using MvvmCross.Binding.BindingContext;
 using MvvmCross.Platforms.Android.Binding.BindingContext;
-using MvvmCross.ViewModels;
+using MvvmCross.WeakSubscription;
 using Toggl.Foundation.MvvmCross.Collections;
 using Toggl.Foundation.MvvmCross.ViewModels;
-using Toggl.Giskard.TemplateSelectors;
+using Toggl.Giskard.ViewHolders;
 using Toggl.Giskard.Views;
 
 namespace Toggl.Giskard.Adapters
 {
-    public sealed class MainRecyclerAdapter
-        : SegmentedRecyclerAdapter<TimeEntryViewModelCollection, TimeEntryViewModel>
+    public class MainRecyclerAdapter : ReactiveSectionedRecyclerAdapter<TimeEntryViewModel>
     {
-        public bool ShouldShowSuggestions
-            => SuggestionsViewModel?.Suggestions.Any() ?? false;
+        public const int ViewTypeSuggestion = 2;
+
+        public IObservable<TimeEntryViewModel> TimeEntryTaps
+            => timeEntryTappedSubject.AsObservable();
+
+        public IObservable<TimeEntryViewModel> ContinueTimeEntrySubject
+            => continueTimeEntrySubject.AsObservable();
+
+        public IObservable<TimeEntryViewModel> DeleteTimeEntrySubject
+            => deleteTimeEntrySubject.AsObservable();
 
         public SuggestionsViewModel SuggestionsViewModel { get; set; }
 
-        public TimeEntriesLogViewModel TimeEntriesLogViewModel { get; set; }
+        private Subject<TimeEntryViewModel> timeEntryTappedSubject = new Subject<TimeEntryViewModel>();
+        private Subject<TimeEntryViewModel> continueTimeEntrySubject = new Subject<TimeEntryViewModel>();
+        private Subject<TimeEntryViewModel> deleteTimeEntrySubject = new Subject<TimeEntryViewModel>();
 
-        private bool isTimeEntryRunning;
-        public bool IsTimeEntryRunning
+        public MainRecyclerAdapter(ObservableGroupedOrderedCollection<TimeEntryViewModel> items) : base(items)
         {
-            get => isTimeEntryRunning;
-            set
-            {
-                if (isTimeEntryRunning == value)
-                    return;
+        }
 
-                isTimeEntryRunning = value;
+        public void ContinueTimeEntry(int position)
+        {
+            var continuedPosition = GetItem(position);
+            if (continuedPosition != null && continuedPosition is TimeEntryViewModel timeEntry)
+            {
+                NotifyItemChanged(position);
+                continueTimeEntrySubject.OnNext(timeEntry);
             }
         }
 
-        public MainRecyclerAdapter()
+        public void DeleteTimeEntry(int position)
         {
-        }
-
-        public MainRecyclerAdapter(IntPtr javaReference, JniHandleOwnership transfer)
-            : base(javaReference, transfer)
-        {
-        }
-
-        protected override int HeaderOffsetForAnimation => ShouldShowSuggestions ? 1 : 0;
-
-        protected override MvxObservableCollection<TimeEntryViewModelCollection> Collection
-            => ItemsSource as MvxObservableCollection<TimeEntryViewModelCollection>;
-
-        public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
-        {
-            var itemBindingContext = new MvxAndroidBindingContext(parent.Context, BindingContext.LayoutInflaterHolder);
-            var inflatedView = InflateViewForHolder(parent, viewType, itemBindingContext);
-
-            switch (viewType)
+            var deletedPosition = GetItem(position);
+            if (deletedPosition != null && deletedPosition is TimeEntryViewModel timeEntry)
             {
-                case MainTemplateSelector.TimeEntry:
-                    return new MainRecyclerViewLogViewHolder(inflatedView, itemBindingContext)
-                    {
-                        Click = TimeEntriesLogViewModel.EditCommand,
-                        ContinueCommand = TimeEntriesLogViewModel.ContinueTimeEntryCommand
-                    };
-
-                case MainTemplateSelector.Suggestions:
-                    return new MainRecyclerViewSuggestionsViewHolder(inflatedView, itemBindingContext);
-
-                default:
-                    return new MvxRecyclerViewHolder(inflatedView, itemBindingContext);
+                deleteTimeEntrySubject.OnNext(timeEntry);
             }
-
-            throw new ArgumentOutOfRangeException(nameof(viewType), $"Invalid viewType provided to {nameof(MainRecyclerAdapter)}");
         }
+
+        protected override int HeaderOffset => 1;
 
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
-            if (position > ItemCount) return;
-
-            base.OnBindViewHolder(holder, position);
-
-            if (holder is MainRecyclerViewLogViewHolder timeEntriesLogRecyclerViewHolder
-                && GetItem(position) is TimeEntryViewModel timeEntry)
+            switch (holder)
             {
-                timeEntriesLogRecyclerViewHolder.CanSync = timeEntry.CanSync;
+                case MainLogCellViewHolder mainLogCellViewHolder:
+                    mainLogCellViewHolder.Item = GetItem(position) as TimeEntryViewModel;
+                    break;
+
+                case MainLogSectionViewHolder mainLogHeaderViewHolder:
+                    mainLogHeaderViewHolder.Item = GetItem(position) as IReadOnlyList<TimeEntryViewModel>;
+                    break;
+
+                case MainLogSuggestionsListViewHolder suggestionsViewHolder:
+                    suggestionsViewHolder.UpdateView();
+                    break;
             }
         }
 
-        public override int ItemCount => base.ItemCount + 1 + (ShouldShowSuggestions ? 1 : 0);
-
-        public override object GetItem(int viewPosition)
+        public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
-            if (viewPosition == 0 && ShouldShowSuggestions)
+            if (viewType == ViewTypeSuggestion)
+            {
+                var suggestionsView = LayoutInflater.FromContext(parent.Context).Inflate(Resource.Layout.MainSuggestions, parent, false);
+                return new MainLogSuggestionsListViewHolder(suggestionsView, SuggestionsViewModel);
+            }
+
+            return base.OnCreateViewHolder(parent, viewType);
+        }
+
+        public override int GetItemViewType(int position)
+        {
+            if (position == 0)
+            {
+                return ViewTypeSuggestion;
+            }
+
+            return base.GetItemViewType(position);
+        }
+
+        public override object GetItem(int position)
+        {
+            if (position == 0)
+            {
                 return SuggestionsViewModel;
-
-            if (viewPosition == ItemCount - 1)
-                return IsTimeEntryRunning;
-
-            return base.GetItem(viewPosition - (ShouldShowSuggestions ? 1 : 0));
+            }
+            return base.GetItem(position);
         }
 
-        internal void ContinueTimeEntry(int viewPosition)
+        protected override RecyclerView.ViewHolder CreateHeaderViewHolder(ViewGroup parent)
         {
-            NotifyItemChanged(viewPosition);
-            var timeEntry = GetItem(viewPosition) as TimeEntryViewModel;
-            if (timeEntry == null) return;
-            TimeEntriesLogViewModel.ContinueTimeEntryCommand.ExecuteAsync(timeEntry);
+            return new MainLogSectionViewHolder(LayoutInflater.FromContext(parent.Context).Inflate(Resource.Layout.MainLogHeader, parent, false));
         }
 
-        internal void DeleteTimeEntry(int viewPosition)
+        protected override RecyclerView.ViewHolder CreateItemViewHolder(ViewGroup parent)
         {
-            var timeEntry = GetItem(viewPosition) as TimeEntryViewModel;
-            if (timeEntry == null) return;
-            TimeEntriesLogViewModel.DeleteCommand.ExecuteAsync(timeEntry);
+            return new MainLogCellViewHolder(LayoutInflater.FromContext(parent.Context).Inflate(Resource.Layout.MainLogCell, parent, false))
+            {
+                TappedSubject = timeEntryTappedSubject,
+                ContinueButtonTappedSubject = continueTimeEntrySubject
+            };
         }
     }
 }
