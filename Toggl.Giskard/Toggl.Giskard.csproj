@@ -280,6 +280,7 @@
     <Compile Include="Startup\TogglApplication.cs" />
     <Compile Include="TemplateSelectors\SelectTagsTemplateSelector.cs" />
     <Compile Include="ViewHolders\MainLogCellViewHolder.cs" />
+    <Compile Include="ViewHolders\MainLogSectionViewHolder.cs" />
     <Compile Include="Views\SelectProjectRecyclerView.cs" />
     <Compile Include="TemplateSelectors\MainTemplateSelector.cs" />
     <Compile Include="Adapters\MainRecyclerAdapter.cs" />
