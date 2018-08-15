@@ -290,7 +290,6 @@
     <Compile Include="Views\SelectProjectRecyclerView.cs" />
     <Compile Include="TemplateSelectors\MainTemplateSelector.cs" />
     <Compile Include="Views\SelectTagsRecyclerView.cs" />
-    <Compile Include="Views\MainRecyclerView.cs" />
     <Compile Include="TemplateSelectors\SelectProjectTemplateSelector.cs" />
     <Compile Include="Startup\SetupTargetFactories.cs">
       <DependentUpon>SetupTargetFactories.tt</DependentUpon>
@@ -300,15 +299,10 @@
     <Compile Include="Extensions\NumberExtensions.cs" />
     <Compile Include="Converters\BoolToConstantOverrides.cs" />
     <Compile Include="Bindings\DrawableColorTargetBinding.cs" />
-    <Compile Include="Views\SuggestionsRecyclerView.cs" />
     <Compile Include="TemplateSelectors\SuggestionsTemplateSelector.cs" />
     <Compile Include="Activities\SettingsActivity.cs" />
     <Compile Include="Bindings\EditTextFocusTargetBinding.cs" />
     <Compile Include="Presenters\TogglPresenter.cs" />
-    <Compile Include="Views\MainRecyclerViewLogViewHolder.cs" />
-    <Compile Include="Views\SuggestionsRecyclerViewSnapHelper.cs" />
-    <Compile Include="Views\SuggestionsRecyclerViewHolder.cs" />
-    <Compile Include="Adapters\SuggestionsRecyclerAdapter.cs" />
     <Compile Include="PlatformConstants.cs" />
     <Compile Include="Activities\StartTimeEntryActivity.cs" />
     <Compile Include="Extensions\VisibilityExtensions.cs" />
@@ -355,8 +349,6 @@
     <Compile Include="TemplateSelectors\SelectBeginningOfWeekTemplateSelector.cs" />
     <Compile Include="Fragments\SelectDurationFormatFragment.cs" />
     <Compile Include="TemplateSelectors\SelectDurationFormatTemplateSelector.cs" />
-    <Compile Include="Views\MainRecyclerViewSuggestionsViewHolder.cs" />
-    <Compile Include="Views\MainRecyclerViewTouchCallback.cs" />
     <Compile Include="Converters\TransparentColorValueConverter.cs" />
     <Compile Include="Adapters\ReportsRecyclerAdapter.cs" />
     <Compile Include="Extensions\ViewExtensions.cs" />
