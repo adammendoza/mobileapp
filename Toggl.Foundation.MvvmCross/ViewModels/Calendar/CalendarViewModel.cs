@@ -67,9 +67,6 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
             ShouldShowOnboarding = shouldShowOnboardingSubject
                 .AsObservable()
                 .DistinctUntilChanged();
-            
-            ShouldShowOnboarding = Observable
-                .Return(!onboardingStorage.CompletedCalendarOnboarding());
 
             this.TimeOfDayFormat = dataSource
                 .Preferences
