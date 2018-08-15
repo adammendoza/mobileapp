@@ -25,6 +25,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
         {
             protected override CalendarViewModel CreateViewModel()
                 => new CalendarViewModel(
+                    DataSource,
                     TimeService,
                     InteractorFactory,
                     OnboardingStorage,
@@ -37,12 +38,14 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
             [Theory, LogIfTooSlow]
             [ConstructorData]
             public void ThrowsIfAnyOfTheArgumentsIsNull(
+                bool useDataSource,
                 bool useTimeService,
                 bool useInteractorFactory,
                 bool useOnboardingStorage,
                 bool useNavigationService,
                 bool usePermissionsService)
             {
+                var dataSource = useDataSource ? DataSource : null;
                 var timeService = useTimeService ? TimeService : null;
                 var interactorFactory = useInteractorFactory ? InteractorFactory : null;
                 var onboardingStorage = useOnboardingStorage ? OnboardingStorage : null;
@@ -51,6 +54,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
 
                 Action tryingToConstructWithEmptyParameters =
                     () => new CalendarViewModel(
+                        dataSource,
                         timeService,
                         interactorFactory,
                         onboardingStorage,
@@ -275,7 +279,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                         .GetDefaultWorkspace()
                         .Execute()
                         .Returns(Observable.Return(workspace));
-                    
+
                     InteractorFactory
                         .CreateTimeEntry(Arg.Any<ITimeEntryPrototype>())
                         .Execute()

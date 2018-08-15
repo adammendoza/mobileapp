@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using Toggl.Foundation.Calendar;
+using Toggl.Foundation.DataSources;
 using Toggl.Foundation.Interactors;
 using Toggl.Foundation.MvvmCross.Collections;
 using Toggl.Foundation.MvvmCross.Services;
@@ -18,6 +19,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
     [Preserve(AllMembers = true)]
     public sealed class CalendarViewModel : MvxViewModel
     {
+        private readonly ITogglDataSource dataSource;
         private readonly ITimeService timeService;
         private readonly IInteractorFactory interactorFactory;
         private readonly IOnboardingStorage onboardingStorage;
@@ -28,6 +30,10 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
 
         public IObservable<bool> ShouldShowOnboarding { get; }
 
+        public IObservable<TimeFormat> TimeOfDayFormat { get; }
+
+        public IObservable<DateTime> Date { get; }
+
         public UIAction GetStartedAction { get; }
 
         public ObservableGroupedOrderedCollection<CalendarItem> CalendarItems { get; }
@@ -35,18 +41,21 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
         public RxAction<CalendarItem, Unit> OnItemTapped { get; }
 
         public CalendarViewModel(
+            ITogglDataSource dataSource,
             ITimeService timeService,
             IInteractorFactory interactorFactory,
             IOnboardingStorage onboardingStorage,
             IPermissionsService permissionsService,
             IMvxNavigationService navigationService)
         {
+            Ensure.Argument.IsNotNull(dataSource, nameof(dataSource));
             Ensure.Argument.IsNotNull(timeService, nameof(timeService));
             Ensure.Argument.IsNotNull(interactorFactory, nameof(interactorFactory));
             Ensure.Argument.IsNotNull(onboardingStorage, nameof(onboardingStorage));
             Ensure.Argument.IsNotNull(navigationService, nameof(navigationService));
             Ensure.Argument.IsNotNull(permissionsService, nameof(permissionsService));
 
+            this.dataSource = dataSource;
             this.timeService = timeService;
             this.interactorFactory = interactorFactory;
             this.onboardingStorage = onboardingStorage;
@@ -59,6 +68,16 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
                 .AsObservable()
                 .DistinctUntilChanged();
             
+            ShouldShowOnboarding = Observable
+                .Return(!onboardingStorage.CompletedCalendarOnboarding());
+
+            this.TimeOfDayFormat = dataSource
+                .Preferences
+                .Current
+                .Select(preferences => preferences.TimeOfDayFormat);
+
+            this.Date = Observable.Return(timeService.CurrentDateTime.Date);
+
             OnItemTapped = new RxAction<CalendarItem, Unit>(onItemTapped);
 
             CalendarItems = new ObservableGroupedOrderedCollection<CalendarItem>(

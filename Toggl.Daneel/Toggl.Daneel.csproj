@@ -548,6 +548,10 @@
     <ImageAsset Include="Resources\Images.xcassets\icIllustrationErrorWorkspace.imageset\icIllustrationErrorWorkspace.png" />
     <ImageAsset Include="Resources\Images.xcassets\icIllustrationErrorWorkspace.imageset\icIllustrationErrorWorkspace%402x.png" />
     <ImageAsset Include="Resources\Images.xcassets\icIllustrationErrorWorkspace.imageset\icIllustrationErrorWorkspace%403x.png" />
+    <ImageAsset Include="Resources\Images.xcassets\icCalendarSmall.imageset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\icCalendarSmall.imageset\icCalendarSmall.png" />
+    <ImageAsset Include="Resources\Images.xcassets\icCalendarSmall.imageset\icCalendarSmall%402x.png" />
+    <ImageAsset Include="Resources\Images.xcassets\icCalendarSmall.imageset\icCalendarSmall%403x.png" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="LaunchScreen.storyboard" />
@@ -1081,6 +1085,7 @@
     <Compile Include="Cells\Calendar\UserCalendarListHeaderViewCell.designer.cs">
       <DependentUpon>UserCalendarListHeaderViewCell.cs</DependentUpon>
     </Compile>
+    <Compile Include="ViewSources\CalendarCollectionViewSource.cs" />
     <Compile Include="Binding\LayoutConstraintActiveTargetBinding.cs" />
     <Compile Include="Extensions\ColorExtensions.cs" />
   </ItemGroup>
@@ -1148,6 +1153,7 @@
     <Folder Include="Views\Calendar\" />
     <Folder Include="ViewControllers\Calendar\" />
     <Folder Include="Cells\Calendar\" />
+    <Folder Include="Resources\Images.xcassets\icCalendarSmall.imageset\" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="GoogleService-Info.plist" />
