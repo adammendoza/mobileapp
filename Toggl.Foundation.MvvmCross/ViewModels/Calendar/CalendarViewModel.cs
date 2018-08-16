@@ -115,7 +115,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
                         shouldShowOnboardingSubject.OnNext(false);
                     }
                 }
-            }).SelectUnit();
+            });
 
         private IObservable<Unit> onItemTapped(CalendarItem calendarItem)
             => Observable.FromAsync(async cancellationToken =>
@@ -136,7 +136,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
 
                 await fetchCalendarItems(timeService.CurrentDateTime.Date);
 
-            }).SelectUnit();
+            });
 
         private async Task fetchCalendarItems(DateTime date)
         {
