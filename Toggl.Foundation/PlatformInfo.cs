@@ -7,6 +7,7 @@
 
     public enum Platform
     {
-        Daneel, Giskard
+        Daneel,
+        Giskard
     }
 }
