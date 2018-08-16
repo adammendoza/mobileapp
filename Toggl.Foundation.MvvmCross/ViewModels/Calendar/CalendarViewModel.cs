@@ -7,6 +7,7 @@ using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using Toggl.Foundation.Calendar;
 using Toggl.Foundation.DataSources;
+using Toggl.Foundation.Extensions;
 using Toggl.Foundation.Interactors;
 using Toggl.Foundation.MvvmCross.Collections;
 using Toggl.Foundation.MvvmCross.Services;
@@ -36,9 +37,11 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
 
         public UIAction GetStartedAction { get; }
 
-        public ObservableGroupedOrderedCollection<CalendarItem> CalendarItems { get; }
+        public InputAction<CalendarItem> OnItemTapped { get; }
 
-        public RxAction<CalendarItem, Unit> OnItemTapped { get; }
+        public InputAction<(DateTimeOffset, TimeSpan)> OnDurationSelected { get; }
+
+        public ObservableGroupedOrderedCollection<CalendarItem> CalendarItems { get; }
 
         public CalendarViewModel(
             ITogglDataSource dataSource,
@@ -68,24 +71,31 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
                 .AsObservable()
                 .DistinctUntilChanged();
 
-            this.TimeOfDayFormat = dataSource
+            TimeOfDayFormat = dataSource
                 .Preferences
                 .Current
                 .Select(preferences => preferences.TimeOfDayFormat);
 
-            this.Date = Observable.Return(timeService.CurrentDateTime.Date);
+            Date = Observable.Return(timeService.CurrentDateTime.Date);
 
-            OnItemTapped = new RxAction<CalendarItem, Unit>(onItemTapped);
+            GetStartedAction = new UIAction(getStarted);
+
+            OnItemTapped = new InputAction<CalendarItem>(onItemTapped);
+
+            OnDurationSelected = new InputAction<(DateTimeOffset StartTime, TimeSpan Duration)>(
+                tuple => onDurationSelected(tuple.StartTime, tuple.Duration)
+            );
 
             CalendarItems = new ObservableGroupedOrderedCollection<CalendarItem>(
                 indexKey: item => item.StartTime,
                 orderingKey: item => item.StartTime,
                 groupingKey: _ => 0);
-
-            GetStartedAction = new UIAction(getStarted);
         }
 
         public override async Task Initialize()
+            => ReloadData();
+
+        public async Task ReloadData()
         {
             var today = timeService.CurrentDateTime.Date;
             await fetchCalendarItems(today);
@@ -118,24 +128,34 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
             });
 
         private IObservable<Unit> onItemTapped(CalendarItem calendarItem)
-            => Observable.FromAsync(async cancellationToken =>
+            => Observable.FromAsync(async () =>
             {
                 switch (calendarItem.Source)
                 {
                     case CalendarItemSource.TimeEntry when calendarItem.TimeEntryId.HasValue:
-                        await navigationService.Navigate<EditTimeEntryViewModel, long>(calendarItem.TimeEntryId.Value);
+                        await navigationService.Navigate<EditTimeEntryViewModel, long, Unit>(calendarItem.TimeEntryId.Value);
                         break;
 
                     case CalendarItemSource.Calendar:
                         var workspace = await interactorFactory.GetDefaultWorkspace().Execute();
                         var prototype = calendarItem.AsTimeEntryPrototype(workspace.Id);
                         var timeEntry = await interactorFactory.CreateTimeEntry(prototype).Execute();
-                        await navigationService.Navigate<EditTimeEntryViewModel, long>(timeEntry.Id);
+                        await navigationService.Navigate<EditTimeEntryViewModel, long, Unit>(timeEntry.Id);
                         break;
                 }
 
                 await fetchCalendarItems(timeService.CurrentDateTime.Date);
 
+            });
+
+        private IObservable<Unit> onDurationSelected(DateTimeOffset startTime, TimeSpan duration)
+            => Observable.FromAsync(async () =>
+            {
+                var workspace = await interactorFactory.GetDefaultWorkspace().Execute();
+                var prototype = duration.AsTimeEntryPrototype(startTime, workspace.Id);
+                await interactorFactory.CreateTimeEntry(prototype).Execute();
+
+                await fetchCalendarItems(timeService.CurrentDateTime.Date);
             });
 
         private async Task fetchCalendarItems(DateTime date)
