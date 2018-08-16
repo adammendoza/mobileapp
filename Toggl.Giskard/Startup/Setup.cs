@@ -35,7 +35,8 @@ namespace Toggl.Giskard
         private const int maxNumberOfSuggestions = 5;
 
         private IAnalyticsService analyticsService;
-        private IMvxNavigationService navigationService;
+        private IForkingNavigationService navigationService;
+        private PlatformInfo platformInfo;
 
 #if USE_PRODUCTION_API
         private const ApiEnvironment environment = ApiEnvironment.Production;
@@ -48,12 +49,14 @@ namespace Toggl.Giskard
         protected override IMvxNavigationService InitializeNavigationService(IMvxViewModelLocatorCollection collection)
         {
             analyticsService = new AnalyticsService();
+            platformInfo = new PlatformInfo { Platform = Platform.Giskard };
 
             var loader = CreateViewModelLoader(collection);
             Mvx.RegisterSingleton<IMvxViewModelLoader>(loader);
 
-            navigationService = new TrackingNavigationService(null, loader, analyticsService);
+            navigationService = new TrackingNavigationService(null, loader, analyticsService, platformInfo);
 
+            Mvx.RegisterSingleton<IForkingNavigationService>(navigationService);
             Mvx.RegisterSingleton<IMvxNavigationService>(navigationService);
             return navigationService;
         }
@@ -83,7 +86,6 @@ namespace Toggl.Giskard
             var settingsStorage = new SettingsStorage(appVersion, keyValueStorage);
             var feedbackService = new FeedbackService(userAgent, mailService, dialogService, platformConstants);
             var schedulerProvider = new AndroidSchedulerProvider();
-            var platformInfo = new PlatformInfo { Platform = Platform.Giskard };
 
             var foundation =
                 TogglFoundation

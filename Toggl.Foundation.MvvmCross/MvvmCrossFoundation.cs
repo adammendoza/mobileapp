@@ -43,7 +43,7 @@ namespace Toggl.Foundation.MvvmCross
         public IUserPreferences UserPreferences { get; }
         public IFeedbackService FeedbackService { get; }
         public IOnboardingStorage OnboardingStorage { get; }
-        public IMvxNavigationService NavigationService { get; }
+        public IForkingNavigationService NavigationService { get; }
         public IPasswordManagerService PasswordManagerService { get; }
         public IErrorHandlingService ErrorHandlingService { get; }
         public IAccessRestrictionStorage AccessRestrictionStorage { get; }
@@ -95,7 +95,7 @@ namespace Toggl.Foundation.MvvmCross
             public IUserPreferences UserPreferences { get; private set; }
             public IFeedbackService FeedbackService { get; private set; }
             public IOnboardingStorage OnboardingStorage { get; private set; }
-            public IMvxNavigationService NavigationService { get; private set; }
+            public IForkingNavigationService NavigationService { get; private set; }
             public IPasswordManagerService PasswordManagerService { get; private set; }
             public IErrorHandlingService ErrorHandlingService { get; private set; }
             public IAccessRestrictionStorage AccessRestrictionStorage { get; private set; }
@@ -150,7 +150,7 @@ namespace Toggl.Foundation.MvvmCross
                 return this;
             }
 
-            public Builder WithNavigationService(IMvxNavigationService navigationService)
+            public Builder WithNavigationService(IForkingNavigationService navigationService)
             {
                 NavigationService = navigationService;
                 return this;
@@ -199,7 +199,7 @@ namespace Toggl.Foundation.MvvmCross
                 => WithOnboardingStorage(new TOnboardingStorage());
 
             public Builder WithNavigationService<TNavigationService>()
-                where TNavigationService : IMvxNavigationService, new()
+                where TNavigationService : IForkingNavigationService, new()
                 => WithNavigationService(new TNavigationService());
 
             public Builder WithPasswordManagerService<TPasswordManagerService>()

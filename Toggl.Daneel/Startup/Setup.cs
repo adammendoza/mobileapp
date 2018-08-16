@@ -34,7 +34,8 @@ namespace Toggl.Daneel
         private const int maxNumberOfSuggestions = 3;
 
         private IAnalyticsService analyticsService;
-        private IMvxNavigationService navigationService;
+        private IForkingNavigationService navigationService;
+        private PlatformInfo platformInfo;
 
 #if USE_PRODUCTION_API
         private const ApiEnvironment environment = ApiEnvironment.Production;
@@ -48,12 +49,14 @@ namespace Toggl.Daneel
         protected override IMvxNavigationService InitializeNavigationService(IMvxViewModelLocatorCollection collection)
         {
             analyticsService = new AnalyticsService();
+            platformInfo = new PlatformInfo { Platform = Platform.Daneel };
 
             var loader = CreateViewModelLoader(collection);
             Mvx.RegisterSingleton<IMvxViewModelLoader>(loader);
 
-            navigationService = new TrackingNavigationService(null, loader, analyticsService);
+            navigationService = new TrackingNavigationService(null, loader, analyticsService, platformInfo);
 
+            Mvx.RegisterSingleton<IForkingNavigationService>(navigationService);
             Mvx.RegisterSingleton<IMvxNavigationService>(navigationService);
             return navigationService;
         }
@@ -92,7 +95,6 @@ namespace Toggl.Daneel
             var remoteConfigService = new RemoteConfigService();
             remoteConfigService.SetupDefaults(remoteConfigDefaultsFileName);
             var schedulerProvider = new IOSSchedulerProvider();
-            var platformInfo = new PlatformInfo { Platform = Platform.Daneel };
 
             var foundation =
                 TogglFoundation
