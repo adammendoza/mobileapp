@@ -1,7 +1,5 @@
 ﻿using System.Reactive.Linq;
-using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
-using Toggl.Foundation.Extensions;
 using Toggl.Foundation.Login;
 using Toggl.Foundation.MvvmCross.ViewModels;
 using Toggl.Multivac;
