@@ -1,6 +1,6 @@
 ﻿using System;
-using Toggl.Foundation.Models;
 using Toggl.Foundation.Models.Interfaces;
+using Toggl.PrimeRadiant;
 using ColorHelper = Toggl.Foundation.Helper.Color;
 
 namespace Toggl.Foundation.Calendar
@@ -23,7 +23,12 @@ namespace Toggl.Foundation.Calendar
 
         public string CalendarId { get; }
 
-        public CalendarItem(CalendarItemSource source,
+        public bool CanBeSynced { get; }
+
+        public bool IsSynced { get; }
+
+        public CalendarItem(
+            CalendarItemSource source,
             DateTimeOffset startTime,
             TimeSpan duration,
             string description,
@@ -38,49 +43,24 @@ namespace Toggl.Foundation.Calendar
             Color = color;
             TimeEntryId = timeEntryId;
             CalendarId = calendarId;
+            IsSynced = true;
+            CanBeSynced = true;
         }
 
-        public CalendarItem(IThreadSafeTimeEntry timeEntry)
-            : this(CalendarItemSource.TimeEntry,
+        private CalendarItem(IThreadSafeTimeEntry timeEntry)
+            : this(
+                CalendarItemSource.TimeEntry,
                 timeEntry.Start,
-                TimeSpan.FromSeconds(timeEntry.Duration.Value),
+                TimeSpan.FromSeconds(timeEntry.Duration ?? 0),
                 timeEntry.Description,
                 timeEntry.Project?.Color ?? ColorHelper.NoProject,
                 timeEntry.Id)
         {
+            IsSynced = timeEntry.SyncStatus == SyncStatus.InSync;
+            CanBeSynced = timeEntry.SyncStatus != SyncStatus.SyncFailed;
         }
 
         public static CalendarItem From(IThreadSafeTimeEntry timeEntry)
             => new CalendarItem(timeEntry);
-
-        public ITimeEntryPrototype AsTimeEntryPrototype(long workspaceId)
-            => new CalendarItemTimeEntryPrototype(this, workspaceId);
-
-        private sealed class CalendarItemTimeEntryPrototype : ITimeEntryPrototype
-        {
-            public long WorkspaceId { get; }
-
-            public string Description { get; }
-
-            public TimeSpan? Duration { get; }
-
-            public DateTimeOffset StartTime { get; }
-
-            public long? ProjectId => null;
-
-            public long? TaskId => null;
-
-            public long[] TagIds => null;
-
-            public bool IsBillable => false;
-
-            public CalendarItemTimeEntryPrototype(CalendarItem calendarItem, long workspaceId)
-            {
-                WorkspaceId = workspaceId;
-                Duration = calendarItem.Duration;
-                StartTime = calendarItem.StartTime;
-                Description = calendarItem.Description;
-            }
-        }
     }
 }
