@@ -92,6 +92,16 @@ namespace Toggl.Foundation.Analytics
 
         IAnalyticsEvent TwoRunningTimeEntriesInconsistencyFixed { get; }
 
+        IAnalyticsEvent CalendarOnboardingStarted { get; }
+
+        IAnalyticsEvent EditViewOpenedFromCalendar { get; }
+
+        IAnalyticsEvent TimeEntryCreateFromCalendarEvent { get; }
+
+        IAnalyticsEvent TimeEntryCreatedFromCalendarTapping { get; }
+
+        IAnalyticsEvent TimeEntryDurationChangedFromCalendar { get; }
+
         void Track(string eventName, Dictionary<string, string> parameters = null);
 
         void Track(Exception exception);

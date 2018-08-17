@@ -143,6 +143,21 @@ namespace Toggl.Foundation.Analytics
         [AnalyticsEvent("Entity", "Status")]
         public IAnalyticsEvent<string, string> EntitySyncStatus { get; protected set; }
 
+        [AnalyticsEvent]
+        public IAnalyticsEvent CalendarOnboardingStarted { get; protected set; }
+
+        [AnalyticsEvent]
+        public IAnalyticsEvent EditViewOpenedFromCalendar { get; protected set; }
+
+        [AnalyticsEvent]
+        public IAnalyticsEvent TimeEntryCreateFromCalendarEvent { get; protected set; }
+
+        [AnalyticsEvent]
+        public IAnalyticsEvent TimeEntryCreatedFromCalendarTapping { get; protected set; }
+
+        [AnalyticsEvent]
+        public IAnalyticsEvent TimeEntryDurationChangedFromCalendar { get; protected set; }
+
         public void Track(Exception exception)
         {
             if (exception.IsAnonymized())
