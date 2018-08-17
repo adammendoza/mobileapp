@@ -52,11 +52,11 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
         public sealed class TheContinueWithoutAccessAction : CalendarPermissionDeniedViewModelTest
         {
             [Fact]
-            public async Task ClosesTheViewModelAndReturnsTrue()
+            public async Task ClosesTheViewModelAndReturnDefaultUnit()
             {
                 await ViewModel.ContinueWithoutAccessAction.Execute(Unit.Default);
 
-                await NavigationService.Received().Close(ViewModel, true);
+                await NavigationService.Received().Close(ViewModel, Unit.Default);
             }
         }
     }
