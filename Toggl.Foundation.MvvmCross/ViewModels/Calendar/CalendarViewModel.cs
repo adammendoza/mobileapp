@@ -4,6 +4,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
+using Toggl.Foundation.Analytics;
 using Toggl.Foundation.Calendar;
 using Toggl.Foundation.DataSources;
 using Toggl.Foundation.Extensions;
@@ -19,8 +20,9 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
     [Preserve(AllMembers = true)]
     public sealed class CalendarViewModel : MvxViewModel
     {
-        private readonly ITogglDataSource dataSource;
         private readonly ITimeService timeService;
+        private readonly ITogglDataSource dataSource;
+        private readonly IAnalyticsService analyticsService;
         private readonly IInteractorFactory interactorFactory;
         private readonly IOnboardingStorage onboardingStorage;
         private readonly IPermissionsService permissionsService;
@@ -43,6 +45,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
         public CalendarViewModel(
             ITogglDataSource dataSource,
             ITimeService timeService,
+            IAnalyticsService analyticsService,
             IInteractorFactory interactorFactory,
             IOnboardingStorage onboardingStorage,
             IPermissionsService permissionsService,
@@ -50,6 +53,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
         {
             Ensure.Argument.IsNotNull(dataSource, nameof(dataSource));
             Ensure.Argument.IsNotNull(timeService, nameof(timeService));
+            Ensure.Argument.IsNotNull(analyticsService, nameof(analyticsService));
             Ensure.Argument.IsNotNull(interactorFactory, nameof(interactorFactory));
             Ensure.Argument.IsNotNull(onboardingStorage, nameof(onboardingStorage));
             Ensure.Argument.IsNotNull(navigationService, nameof(navigationService));
@@ -57,6 +61,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
 
             this.dataSource = dataSource;
             this.timeService = timeService;
+            this.analyticsService = analyticsService;
             this.interactorFactory = interactorFactory;
             this.onboardingStorage = onboardingStorage;
             this.navigationService = navigationService;
@@ -86,7 +91,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
                 groupingKey: _ => 0);
         }
 
-        public override async Task Initialize()
+        public override Task Initialize()
             => ReloadData();
 
         public async Task ReloadData()
@@ -98,6 +103,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
         private IObservable<Unit> getStarted()
             => permissionsService
                 .RequestCalendarAuthorization()
+                .Track(analyticsService.CalendarOnboardingStarted)
                 .Do(handlePermissionRequestResult)
                 .SelectUnit();
 
@@ -115,13 +121,15 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
                 switch (calendarItem.Source)
                 {
                     case CalendarItemSource.TimeEntry when calendarItem.TimeEntryId.HasValue:
-                        await navigationService.Navigate<EditTimeEntryViewModel, long, Unit>(calendarItem.TimeEntryId.Value);
+                        analyticsService.EditViewOpenedFromCalendar.Track();
+                        await navigationService.Navigate<EditTimeEntryViewModel, long, Unit>(calendarItem.TimeEntryId.Value);   
                         break;
 
                     case CalendarItemSource.Calendar:
                         var workspace = await interactorFactory.GetDefaultWorkspace().Execute();
                         var prototype = calendarItem.AsTimeEntryPrototype(workspace.Id);
                         var timeEntry = await interactorFactory.CreateTimeEntry(prototype).Execute();
+                        analyticsService.TimeEntryCreateFromCalendarEvent.Track();
                         await navigationService.Navigate<EditTimeEntryViewModel, long, Unit>(timeEntry.Id);
                         break;
                 }
@@ -136,6 +144,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
                 var workspace = await interactorFactory.GetDefaultWorkspace().Execute();
                 var prototype = duration.AsTimeEntryPrototype(startTime, workspace.Id);
                 await interactorFactory.CreateTimeEntry(prototype).Execute();
+                analyticsService.TimeEntryCreatedFromCalendarTapping.Track();
 
                 await fetchCalendarItems(timeService.CurrentDateTime.Date);
             });
