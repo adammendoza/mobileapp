@@ -54,7 +54,7 @@ namespace Toggl.Daneel
             var loader = CreateViewModelLoader(collection);
             Mvx.RegisterSingleton<IMvxViewModelLoader>(loader);
 
-            navigationService = new TrackingNavigationService(null, loader, analyticsService, platformInfo);
+            navigationService = new NavigationService(null, loader, analyticsService, platformInfo);
 
             Mvx.RegisterSingleton<IForkingNavigationService>(navigationService);
             Mvx.RegisterSingleton<IMvxNavigationService>(navigationService);

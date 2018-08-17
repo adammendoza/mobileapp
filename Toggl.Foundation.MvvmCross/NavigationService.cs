@@ -8,12 +8,12 @@ using Toggl.Foundation.MvvmCross.Services;
 
 namespace Toggl.Foundation.MvvmCross
 {
-    public sealed class TrackingNavigationService : MvxNavigationService, IForkingNavigationService
+    public sealed class NavigationService : MvxNavigationService, IForkingNavigationService
     {
         private readonly IAnalyticsService analyticsService;
         private readonly PlatformInfo platformInfo;
 
-        public TrackingNavigationService(
+        public NavigationService(
             IMvxNavigationCache navigationCache,
             IMvxViewModelLoader viewModelLoader,
             IAnalyticsService analyticsService,
