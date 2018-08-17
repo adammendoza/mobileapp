@@ -71,8 +71,8 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
             shouldShowOnboardingSubject = new BehaviorSubject<bool>(!isCompleted);
             ShouldShowOnboarding = shouldShowOnboardingSubject
                 .AsObservable()
-                .DistinctUntilChanged();
-                //.AsDriver(false, schedulerProvider);
+                .DistinctUntilChanged()
+                .AsDriver(false, schedulerProvider);
 
             TimeOfDayFormat = dataSource
                 .Preferences
