@@ -116,15 +116,13 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
                 {
                     var calendarIds = await navigationService.Navigate<SelectUserCalendarsViewModel, string[]>();
                     interactorFactory.SetEnabledCalendars(calendarIds).Execute();
-                    onboardingStorage.SetCompletedCalendarOnboarding();
-                    shouldShowOnboardingSubject.OnNext(false);
                 }
                 else
                 {
                     await navigationService.Navigate<CalendarPermissionDeniedViewModel, Unit>();
-                    onboardingStorage.SetCompletedCalendarOnboarding();
-                    shouldShowOnboardingSubject.OnNext(false);
                 }
+                onboardingStorage.SetCompletedCalendarOnboarding();
+                shouldShowOnboardingSubject.OnNext(false);
             });
 
         private IObservable<Unit> onItemTapped(CalendarItem calendarItem)
