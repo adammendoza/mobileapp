@@ -61,7 +61,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
             [Theory, LogIfTooSlow]
             [InlineData(true)]
             [InlineData(false)]
-            public void CheckIfTheGhostPropertyIsTakenFromTimeEntry(bool isGhost)
+            public void ShouldBeTakenFromTimeEntry(bool isGhost)
             {
                 MockTimeEntry.IsGhost.Returns(isGhost);
 
