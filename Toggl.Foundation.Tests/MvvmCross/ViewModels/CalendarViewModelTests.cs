@@ -122,7 +122,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
             }
 
             [Fact, LogIfTooSlow]
-            public async Task EnmitsFalseWhenUserGrantsCalendarAccess()
+            public async Task EmitsFalseWhenUserGrantsCalendarAccess()
             {
                 OnboardingStorage.CompletedCalendarOnboarding().Returns(false);
                 var observer = Substitute.For<IObserver<bool>>();
@@ -140,13 +140,13 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
             }
 
             [Fact, LogIfTooSlow]
-            public async Task EnmitsFalseWhenUserWantsToContinueWithoutCalendarAccess()
+            public async Task EmitsFalseWhenUserWantsToContinueWithoutCalendarAccess()
             {
                 OnboardingStorage.CompletedCalendarOnboarding().Returns(false);
                 var observer = Substitute.For<IObserver<bool>>();
                 ViewModel.ShouldShowOnboarding.Subscribe(observer);
                 PermissionsService.RequestCalendarAuthorization().Returns(Observable.Return(false));
-                NavigationService.Navigate<CalendarPermissionDeniedViewModel, bool>().Returns(true);
+                NavigationService.Navigate<CalendarPermissionDeniedViewModel, Unit>().Returns(Unit.Default);
 
                 await ViewModel.GetStartedAction.Execute(Unit.Default);
 
@@ -175,7 +175,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
 
                 await ViewModel.GetStartedAction.Execute(Unit.Default);
 
-                await NavigationService.Received().Navigate<CalendarPermissionDeniedViewModel, bool>();
+                await NavigationService.Received().Navigate<CalendarPermissionDeniedViewModel, Unit>();
             }
 
             [Fact, LogIfTooSlow]
@@ -216,7 +216,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
             public async Task SetsCalendarOnboardingAsCompletedIfUserWantsToContinueWithoutGivingPermission()
             {
                 PermissionsService.RequestCalendarAuthorization().Returns(Observable.Return(false));
-                NavigationService.Navigate<CalendarPermissionDeniedViewModel, bool>().Returns(true);
+                NavigationService.Navigate<CalendarPermissionDeniedViewModel, Unit>().Returns(Unit.Default);
 
                 await ViewModel.GetStartedAction.Execute(Unit.Default);
 

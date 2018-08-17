@@ -80,7 +80,6 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
                 selectedCalendarIds.Add(calendar.Id);
 
             doneActionEnabledSubject.OnNext(selectedCalendarIds.Any());
-            Console.WriteLine($"Emitting {selectedCalendarIds.Any()}");
 
             return Observable.Return(Unit.Default);
         }
