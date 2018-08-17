@@ -12,7 +12,7 @@ namespace Toggl.Daneel.Services
 {
     public sealed class CalendarService : BaseCalendarService
     {
-        private readonly EKEventStore eventStore = new EKEventStore();
+        private EKEventStore eventStore => new EKEventStore();
 
         public CalendarService(IPermissionsService permissionsService)
             : base (permissionsService)
@@ -60,6 +60,7 @@ namespace Toggl.Daneel.Services
                 startDate,
                 duration,
                 ev.Title,
+                CalendarIconKind.Event,
                 ev.Calendar.CGColor.ToHexColor(),
                 calendarId: ev.Calendar.CalendarIdentifier
             );

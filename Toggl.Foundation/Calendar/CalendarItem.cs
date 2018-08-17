@@ -23,16 +23,15 @@ namespace Toggl.Foundation.Calendar
 
         public string CalendarId { get; }
 
-        public bool CanBeSynced { get; }
-
-        public bool IsSynced { get; }
+        public CalendarIconKind IconKind { get; }
 
         public CalendarItem(
             CalendarItemSource source,
             DateTimeOffset startTime,
             TimeSpan duration,
             string description,
-            string color = "",
+            CalendarIconKind iconKind,
+            string color = ColorHelper.NoProject,
             long? timeEntryId = null,
             string calendarId = "")
         {
@@ -43,8 +42,7 @@ namespace Toggl.Foundation.Calendar
             Color = color;
             TimeEntryId = timeEntryId;
             CalendarId = calendarId;
-            IsSynced = true;
-            CanBeSynced = true;
+            IconKind = iconKind;
         }
 
         private CalendarItem(IThreadSafeTimeEntry timeEntry)
@@ -53,14 +51,44 @@ namespace Toggl.Foundation.Calendar
                 timeEntry.Start,
                 TimeSpan.FromSeconds(timeEntry.Duration ?? 0),
                 timeEntry.Description,
+                CalendarIconKind.None,
                 timeEntry.Project?.Color ?? ColorHelper.NoProject,
                 timeEntry.Id)
         {
-            IsSynced = timeEntry.SyncStatus == SyncStatus.InSync;
-            CanBeSynced = timeEntry.SyncStatus != SyncStatus.SyncFailed;
+            switch (timeEntry.SyncStatus)
+            {
+                case SyncStatus.SyncNeeded:
+                    IconKind = CalendarIconKind.Unsynced;
+                    break;
+                case SyncStatus.SyncFailed:
+                    IconKind = CalendarIconKind.Unsyncable;
+                    break;
+            }
         }
 
         public static CalendarItem From(IThreadSafeTimeEntry timeEntry)
             => new CalendarItem(timeEntry);
+
+        public CalendarItem WithStartTime(DateTimeOffset startTime)
+            => new CalendarItem(
+                this.Source,
+                startTime,
+                this.Duration,
+                this.Description,
+                this.IconKind,
+                this.Color,
+                this.TimeEntryId,
+                this.CalendarId);
+
+        public CalendarItem WithDuration(TimeSpan duration)
+            => new CalendarItem(
+                this.Source,
+                this.StartTime,
+                duration,
+                this.Description,
+                this.IconKind,
+                this.Color,
+                this.TimeEntryId,
+                this.CalendarId);
     }
 }
