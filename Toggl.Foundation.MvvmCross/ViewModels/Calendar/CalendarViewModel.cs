@@ -63,7 +63,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
             this.permissionsService = permissionsService;
 
             ShouldShowOnboarding = Observable
-                .Return(!onboardingStorage.CompletedCalendarOnboarding());
+                .Return(false);
 
             TimeOfDayFormat = dataSource
                 .Preferences

@@ -37,7 +37,7 @@ namespace Toggl.Daneel.ViewSources
         private readonly CompositeDisposable disposeBag = new CompositeDisposable();
         private readonly ISubject<CalendarItem> itemTappedSubject = new Subject<CalendarItem>();
 
-        private bool isAddingItem = false;
+        public bool IsEditing { get; set; }
 
         public IObservable<CalendarItem> ItemTapped => itemTappedSubject.AsObservable();
 
@@ -137,7 +137,9 @@ namespace Toggl.Daneel.ViewSources
 
         public NSIndexPath InsertPlaceholder(DateTimeOffset startTime, TimeSpan duration)
         {
-            isAddingItem = true;
+            if (!IsEditing)
+                throw new InvalidOperationException("Set IsEditing before calling insert/update/remove");
+
             var indexPath = insertPlaceholder(startTime, duration);
             CollectionView.InsertItems(new NSIndexPath[] { indexPath });
             return indexPath;
@@ -145,19 +147,18 @@ namespace Toggl.Daneel.ViewSources
 
         public NSIndexPath UpdatePlaceholder(NSIndexPath indexPath, DateTimeOffset startTime, TimeSpan duration)
         {
-            if (isAddingItem)
-            {
-                var updatedIndexPath = updatePlaceholder(indexPath, startTime, duration);
-                CollectionView.ReloadItems(new NSIndexPath[] { indexPath });
-                return updatedIndexPath;
-            }
-            return indexPath;
+            if (!IsEditing)
+                throw new InvalidOperationException("Set IsEditing before calling insert/update/remove");
+
+            var updatedIndexPath = updatePlaceholder(indexPath, startTime, duration);
+            CollectionView.ReloadItems(new NSIndexPath[] { indexPath });
+            return updatedIndexPath;
         }
 
         public void RemovePlaceholder(NSIndexPath indexPath)
         {
-            if (!isAddingItem)
-                return;
+            if (!IsEditing)
+                throw new InvalidOperationException("Set IsEditing before calling insert/update/remove");
 
             removePlaceholder(indexPath);
             CollectionView.DeleteItems(new NSIndexPath[] { indexPath });

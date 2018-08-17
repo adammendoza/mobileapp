@@ -15,6 +15,7 @@ namespace Toggl.Daneel.ViewControllers
         private CalendarCollectionViewLayout layout;
         private CalendarCollectionViewSource dataSource;
         private CalendarCollectionViewCreateFromSpanHelper createFromSpanHelper;
+        private CalendarCollectionViewEditItemHelper editItemHelper;
 
         public CalendarViewController() : base(nameof(CalendarViewController))
         {
@@ -38,6 +39,7 @@ namespace Toggl.Daneel.ViewControllers
             layout = new CalendarCollectionViewLayout(timeService, dataSource);
 
             createFromSpanHelper = new CalendarCollectionViewCreateFromSpanHelper(CalendarCollectionView, dataSource, layout);
+            editItemHelper = new CalendarCollectionViewEditItemHelper(CalendarCollectionView, dataSource, layout);
 
             CalendarCollectionView.SetCollectionViewLayout(layout, false);
             CalendarCollectionView.Delegate = dataSource;

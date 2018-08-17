@@ -11,7 +11,7 @@ using Math = System.Math;
 
 namespace Toggl.Daneel.Views.Calendar
 {
-    public class CalendarCollectionViewCreateFromSpanHelper
+    public sealed class CalendarCollectionViewCreateFromSpanHelper : NSObject, IUIGestureRecognizerDelegate
     {
         private static readonly TimeSpan defaultDuration = TimeSpan.FromMinutes(15);
 
@@ -43,8 +43,17 @@ namespace Toggl.Daneel.Views.Calendar
             this.layout = layout;
 
             longPressGestureRecognizer = new UILongPressGestureRecognizer(onLongPress);
+            longPressGestureRecognizer.Delegate = this;
             collectionView.AddGestureRecognizer(longPressGestureRecognizer);
         }
+
+        public CalendarCollectionViewCreateFromSpanHelper(IntPtr handle) : base(handle)
+        {
+        }
+
+        [Export("gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:")]
+        public bool ShouldRecognizeSimultaneously(UIGestureRecognizer gestureRecognizer, UIGestureRecognizer otherGestureRecognizer)
+            => otherGestureRecognizer is UILongPressGestureRecognizer;
 
         private void onLongPress(UILongPressGestureRecognizer gesture)
         {
@@ -67,6 +76,7 @@ namespace Toggl.Daneel.Views.Calendar
                 case UIGestureRecognizerState.Cancelled:
                 case UIGestureRecognizerState.Failed:
                     dataSource.RemovePlaceholder(itemIndexPath);
+                    dataSource.IsEditing = false;
                     itemIndexPath = null;
                     break;
             }
@@ -74,9 +84,10 @@ namespace Toggl.Daneel.Views.Calendar
 
         private void longPressBegan(CGPoint point)
         {
-            if (dataSource.CalendarItemAtPoint(point) != null)
+            if (dataSource.IsEditing || dataSource.CalendarItemAtPoint(point) != null)
                 return;
 
+            dataSource.IsEditing = true;
             firstPoint = point;
             lastPoint = point;
             var startTime = layout.DateAtPoint(firstPoint).RoundDownToClosestQuarter();
@@ -134,6 +145,9 @@ namespace Toggl.Daneel.Views.Calendar
 
             var duration = endTime - startTime;
             createFromSpanSuject.OnNext((startTime, duration));
+
+            dataSource.IsEditing = false;
+            itemIndexPath = null;
         }
     }
 }
