@@ -1,4 +1,5 @@
-﻿using CoreGraphics;
+﻿using System.Reactive.Linq;
+using CoreGraphics;
 using Toggl.Daneel.Extensions;
 using Toggl.Daneel.Presentation.Attributes;
 using Toggl.Daneel.ViewSources;
@@ -16,6 +17,9 @@ namespace Toggl.Daneel.ViewControllers.Calendar
         private const int maxHeight = 627;
         private const int width = 288;
 
+        private const float enabledDoneButtonAlpha = 1;
+        private const float disabledDoneButtonAlpha = 0.32f;
+
         public SelectUserCalendarsViewController() : base(null)
         {
         }
@@ -29,6 +33,8 @@ namespace Toggl.Daneel.ViewControllers.Calendar
 
             this.Bind(DoneButton.Tapped(), ViewModel.DoneAction);
             this.Bind(source.ItemSelected, ViewModel.SelectCalendarAction);
+            this.Bind(ViewModel.DoneActionEnabled, DoneButton.BindEnabled());
+            this.Bind(ViewModel.DoneActionEnabled.Select(alphaForEnabled), DoneButton.BindAnimatedAlpha());
         }
 
         public override void ViewDidLayoutSubviews()
@@ -54,5 +60,8 @@ namespace Toggl.Daneel.ViewControllers.Calendar
 
         private int calculateTargetHeight()
             => heightAboveTableView + heightBelowTableView + (int)TableView.ContentSize.Height;
+
+        private float alphaForEnabled(bool enabled)
+            => enabled ? enabledDoneButtonAlpha : disabledDoneButtonAlpha;
     }
 }

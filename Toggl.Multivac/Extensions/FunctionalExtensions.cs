@@ -31,17 +31,6 @@ namespace Toggl.Multivac.Extensions
             }
         }
 
-        public static void ForEach<TItem, _>(this IEnumerable<TItem> self, Func<TItem, _> func)
-        {
-            Ensure.Argument.IsNotNull(self, nameof(self));
-            Ensure.Argument.IsNotNull(func, nameof(func));
-
-            foreach (TItem item in self)
-            {
-                func(item);
-            }
-        }
-
         public static void ForEach<T1, T2>(this IEnumerable<ValueTuple<T1, T2>> self, Action<T1, T2> action)
         {
             Ensure.Argument.IsNotNull(self, nameof(self));

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
@@ -22,6 +23,10 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
 
         private readonly HashSet<string> selectedCalendarIds = new HashSet<string>();
 
+        private readonly ISubject<bool> doneActionEnabledSubject = new BehaviorSubject<bool>(false);
+
+        public IObservable<bool> DoneActionEnabled { get; }
+
         public ObservableGroupedOrderedCollection<SelectableUserCalendarViewModel> Calendars { get; }
             = new ObservableGroupedOrderedCollection<SelectableUserCalendarViewModel>(
                 indexKey: c => c.Id,
@@ -35,16 +40,22 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
 
         public SelectUserCalendarsViewModel(
             IInteractorFactory interactorFactory,
+            ISchedulerProvider schedulerProvider,
             IMvxNavigationService navigationService)
         {
             Ensure.Argument.IsNotNull(interactorFactory, nameof(interactorFactory));
+            Ensure.Argument.IsNotNull(schedulerProvider, nameof(schedulerProvider));
             Ensure.Argument.IsNotNull(navigationService, nameof(navigationService));
 
             this.interactorFactory = interactorFactory;
             this.navigationService = navigationService;
 
+            DoneActionEnabled = doneActionEnabledSubject
+                .AsObservable()
+                .DistinctUntilChanged();
+
             SelectCalendarAction = new InputAction<SelectableUserCalendarViewModel>(selectCalendar);
-            DoneAction = new UIAction(done);
+            DoneAction = new UIAction(done, DoneActionEnabled);
         }
 
         public override async Task Initialize()
@@ -67,6 +78,9 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
                 selectedCalendarIds.Remove(calendar.Id);
             else
                 selectedCalendarIds.Add(calendar.Id);
+
+            doneActionEnabledSubject.OnNext(selectedCalendarIds.Any());
+            Console.WriteLine($"Emitting {selectedCalendarIds.Any()}");
 
             return Observable.Return(Unit.Default);
         }

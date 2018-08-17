@@ -48,6 +48,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
             ITimeService timeService,
             IInteractorFactory interactorFactory,
             IOnboardingStorage onboardingStorage,
+            ISchedulerProvider schedulerProvider,
             IPermissionsService permissionsService,
             IMvxNavigationService navigationService)
         {
@@ -55,6 +56,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
             Ensure.Argument.IsNotNull(timeService, nameof(timeService));
             Ensure.Argument.IsNotNull(interactorFactory, nameof(interactorFactory));
             Ensure.Argument.IsNotNull(onboardingStorage, nameof(onboardingStorage));
+            Ensure.Argument.IsNotNull(schedulerProvider, nameof(schedulerProvider));
             Ensure.Argument.IsNotNull(navigationService, nameof(navigationService));
             Ensure.Argument.IsNotNull(permissionsService, nameof(permissionsService));
 
@@ -70,6 +72,7 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
             ShouldShowOnboarding = shouldShowOnboardingSubject
                 .AsObservable()
                 .DistinctUntilChanged();
+                //.AsDriver(false, schedulerProvider);
 
             TimeOfDayFormat = dataSource
                 .Preferences

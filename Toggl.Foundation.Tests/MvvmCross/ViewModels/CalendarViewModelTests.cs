@@ -60,6 +60,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                     TimeService,
                     InteractorFactory,
                     OnboardingStorage,
+                    SchedulerProvider,
                     PermissionsService,
                     NavigationService
                 );
@@ -74,6 +75,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                 bool useTimeService,
                 bool useInteractorFactory,
                 bool useOnboardingStorage,
+                bool useSchedulerProvider,
                 bool useNavigationService,
                 bool usePermissionsService)
             {
@@ -81,6 +83,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                 var timeService = useTimeService ? TimeService : null;
                 var interactorFactory = useInteractorFactory ? InteractorFactory : null;
                 var onboardingStorage = useOnboardingStorage ? OnboardingStorage : null;
+                var schedulerProvider = useSchedulerProvider ? SchedulerProvider : null;
                 var navigationService = useNavigationService ? NavigationService : null;
                 var permissionsService = usePermissionsService ? PermissionsService : null;
 
@@ -90,6 +93,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                         timeService,
                         interactorFactory,
                         onboardingStorage,
+                        schedulerProvider,
                         permissionsService,
                         navigationService);
 
