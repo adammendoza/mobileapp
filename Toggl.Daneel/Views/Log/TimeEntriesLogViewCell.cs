@@ -83,12 +83,14 @@ namespace Toggl.Daneel.Views
             BillableImageViewSpacingConstraint.Constant = Item.HasTags ? hasTagsBillableSpacing : noTagsBillableSpacing;
 
             // Visibility
+            var showContinueButton = Item.CanSync && !Item.IsGhost;
+
             ProjectTaskClientLabel.Hidden = !Item.HasProject;
             AddDescriptionLabel.Hidden = Item.HasDescription;
-            SyncErrorImageView.Hidden = Item.CanSync;
+            SyncErrorImageView.Hidden = showContinueButton;
             UnsyncedImageView.Hidden = !Item.NeedsSync;
-            ContinueButton.Hidden = !Item.CanSync;
-            ContinueImageView.Hidden = !Item.CanSync;
+            ContinueButton.Hidden = !showContinueButton;
+            ContinueImageView.Hidden = !showContinueButton;
             BillableImageView.Hidden = !Item.IsBillable;
             TagsImageView.Hidden = !Item.HasTags;
         }
