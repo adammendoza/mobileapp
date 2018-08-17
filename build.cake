@@ -233,8 +233,8 @@ private TemporaryFileTransformation GetIosInfoConfigurationTransformation()
 
     if (target == "Build.Release.iOS.AdHoc")
     {
-        bundleId = "com.toggl.giskard.calendar";
-        appName = "Toggl for Calendar Tests";
+        bundleId = "com.toggl.daneel.adhoc";
+        appName = "Toggl for Tests";
         iconSet = "Assets.xcassets/AppIcon-adhoc.appiconset";
     }
     else if (target == "Build.Release.iOS.AppStore")
