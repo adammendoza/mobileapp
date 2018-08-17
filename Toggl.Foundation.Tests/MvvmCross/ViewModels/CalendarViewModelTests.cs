@@ -13,6 +13,7 @@ using Toggl.Foundation.Tests.Generators;
 using Toggl.Foundation.Tests.Mocks;
 using Xunit;
 using ITimeEntryPrototype = Toggl.Foundation.Models.ITimeEntryPrototype;
+using Toggl.Foundation.Analytics;
 
 namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
 {
@@ -55,6 +56,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                 => new CalendarViewModel(
                     DataSource,
                     TimeService,
+                    AnalyticsService,
                     InteractorFactory,
                     OnboardingStorage,
                     PermissionsService,
@@ -69,6 +71,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
             public void ThrowsIfAnyOfTheArgumentsIsNull(
                 bool useDataSource,
                 bool useTimeService,
+                bool useAnalyticsService,
                 bool useInteractorFactory,
                 bool useOnboardingStorage,
                 bool useNavigationService,
@@ -76,6 +79,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
             {
                 var dataSource = useDataSource ? DataSource : null;
                 var timeService = useTimeService ? TimeService : null;
+                var analyticsService = useAnalyticsService ? AnalyticsService : null;
                 var interactorFactory = useInteractorFactory ? InteractorFactory : null;
                 var onboardingStorage = useOnboardingStorage ? OnboardingStorage : null;
                 var navigationService = useNavigationService ? NavigationService : null;
@@ -85,6 +89,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                     () => new CalendarViewModel(
                         dataSource,
                         timeService,
+                        analyticsService,
                         interactorFactory,
                         onboardingStorage,
                         permissionsService,
@@ -131,6 +136,16 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
 
                 await NavigationService.Received().Navigate<CalendarPermissionDeniedViewModel>();
             }
+
+            [Fact, LogIfTooSlow]
+            public async Task TracksTheCalendarOnbardingStartedEvent()
+            {
+                PermissionsService.RequestCalendarAuthorization().Returns(Observable.Return(false));
+
+                await ViewModel.GetStartedAction.Execute(Unit.Default);
+
+                AnalyticsService.CalendarOnboardingStarted.Received().Track();
+            }
         }
 
         public sealed class TheCalendarItemsProperty : CalendarViewModelTest
@@ -159,9 +174,11 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
 
         public abstract class TheOnItemTappedAction : CalendarViewModelTest
         {
+            protected abstract IAnalyticsEvent Event { get; }
+
             protected abstract CalendarItem CalendarItem { get; }
 
-            [Fact]
+            [Fact, LogIfTooSlow]
             public async Task NavigatesToTheEditTimeEntryViewModelUsingTheTimeEntryId()
             {
                 await ViewModel.OnItemTapped.Execute(CalendarItem);
@@ -169,7 +186,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                 await NavigationService.Received().Navigate<EditTimeEntryViewModel, long, Unit>(Arg.Is(TimeEntryId));
             }
 
-            [Fact]
+            [Fact, LogIfTooSlow]
             public async Task RefetchesTheTimeEntryItemsUsingTheInteractor()
             {
                 await ViewModel.OnItemTapped.Execute(CalendarItem);
@@ -177,8 +194,18 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                 await CalendarInteractor.Received().Execute();
             }
 
+            [Fact, LogIfTooSlow]
+            public async Task TracksTheAppropriateEventToTheAnalyticsService()
+            {
+                await ViewModel.OnItemTapped.Execute(CalendarItem);
+
+                Event.Received().Track();
+            }
+
             public sealed class WhenHandlingTimeEntryItems : TheOnItemTappedAction
             {
+                protected override IAnalyticsEvent Event => AnalyticsService.EditViewOpenedFromCalendar;
+
                 protected override CalendarItem CalendarItem { get; } = new CalendarItem(
                     CalendarItemSource.TimeEntry,
                     new DateTimeOffset(2018, 08, 10, 0, 0, 0, TimeSpan.Zero),
@@ -192,6 +219,8 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
 
             public sealed class WhenHandlingCalendarItems : TheOnItemTappedAction
             {
+                protected override IAnalyticsEvent Event => AnalyticsService.TimeEntryCreateFromCalendarEvent;
+
                 protected override CalendarItem CalendarItem { get; } = new CalendarItem(
                     CalendarItemSource.Calendar,
                     new DateTimeOffset(2018, 08, 10, 0, 15, 0, TimeSpan.Zero),
@@ -200,7 +229,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                     CalendarIconKind.Event
                 );
 
-                [Fact]
+                [Fact, LogIfTooSlow]
                 public async Task CreatesATimeEntryUsingTheCalendarItemInfo()
                 {
                     await ViewModel.OnItemTapped.Execute(CalendarItem);
@@ -211,7 +240,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                         .Execute();
                 }
 
-                [Fact]
+                [Fact, LogIfTooSlow]
                 public async Task CreatesATimeEntryInTheDefaultWorkspace()
                 {
                     await ViewModel.OnItemTapped.Execute(CalendarItem);
@@ -226,7 +255,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
 
         public sealed class TheOnDurationSelectedAction : CalendarViewModelTest
         {
-            [Fact]
+            [Fact, LogIfTooSlow]
             public async Task CreatesATimeEntryWithTheSelectedStartDate()
             {
                 var now = DateTimeOffset.UtcNow;
@@ -241,7 +270,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                     .Execute();
             }
 
-            [Fact]
+            [Fact, LogIfTooSlow]
             public async Task CreatesATimeEntryWithTheSelectedDuration()
             {
                 var now = DateTimeOffset.UtcNow;
@@ -256,7 +285,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                     .Execute();
             }
 
-            [Fact]
+            [Fact, LogIfTooSlow]
             public async Task CreatesATimeEntryInTheDefaultWorkspace()
             {
                 var now = DateTimeOffset.UtcNow;
@@ -271,7 +300,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                     .Execute();
             }
 
-            [Fact]
+            [Fact, LogIfTooSlow]
             public async Task RefetchesTheTimeEntryItemsUsingTheInteractor()
             {
                 var now = DateTimeOffset.UtcNow;
@@ -281,6 +310,18 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
                 await ViewModel.OnDurationSelected.Execute(tuple);
 
                 await CalendarInteractor.Received().Execute();
+            }
+
+            [Fact, LogIfTooSlow]
+            public async Task TracksTheTimeEntryCreatedFromCalendarTappingEventToTheAnalyticsService()
+            {
+                var now = DateTimeOffset.UtcNow;
+                var duration = TimeSpan.FromMinutes(30);
+                var tuple = (now, duration);
+
+                await ViewModel.OnDurationSelected.Execute(tuple);
+
+                AnalyticsService.TimeEntryCreatedFromCalendarTapping.Received().Track();
             }
         }
     }
