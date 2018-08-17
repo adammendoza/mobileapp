@@ -121,7 +121,9 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
                 {
                     await navigationService.Navigate<CalendarPermissionDeniedViewModel, Unit>();
                 }
+
                 onboardingStorage.SetCompletedCalendarOnboarding();
+                await ReloadData();
                 shouldShowOnboardingSubject.OnNext(false);
             });
 
