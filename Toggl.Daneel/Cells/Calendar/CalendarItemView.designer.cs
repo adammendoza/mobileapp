@@ -13,6 +13,9 @@ namespace Toggl.Daneel.Cells.Calendar
 	partial class CalendarItemView
 	{
 		[Outlet]
+		UIKit.UIView BottomDragIndicator { get; set; }
+
+		[Outlet]
 		UIKit.UIImageView CalendarIconImageView { get; set; }
 
 		[Outlet]
@@ -26,6 +29,9 @@ namespace Toggl.Daneel.Cells.Calendar
 
 		[Outlet]
 		UIKit.UILabel DescriptionLabel { get; set; }
+
+		[Outlet]
+		UIKit.UIView TopDragIndicator { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{
@@ -44,14 +50,24 @@ namespace Toggl.Daneel.Cells.Calendar
 				CalendarIconTrailingConstraint = null;
 			}
 
+			if (ColorView != null) {
+				ColorView.Dispose ();
+				ColorView = null;
+			}
+
 			if (DescriptionLabel != null) {
 				DescriptionLabel.Dispose ();
 				DescriptionLabel = null;
 			}
 
-			if (ColorView != null) {
-				ColorView.Dispose ();
-				ColorView = null;
+			if (TopDragIndicator != null) {
+				TopDragIndicator.Dispose ();
+				TopDragIndicator = null;
+			}
+
+			if (BottomDragIndicator != null) {
+				BottomDragIndicator.Dispose ();
+				BottomDragIndicator = null;
 			}
 		}
 	}
