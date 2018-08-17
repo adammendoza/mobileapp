@@ -11,7 +11,7 @@ using Math = System.Math;
 
 namespace Toggl.Daneel.Views.Calendar
 {
-    public class CalendarCollectionViewLongPressHelper
+    public class CalendarCollectionViewCreateFromSpanHelper
     {
         private static readonly TimeSpan defaultDuration = TimeSpan.FromMinutes(15);
 
@@ -29,7 +29,7 @@ namespace Toggl.Daneel.Views.Calendar
         private readonly ISubject<(DateTimeOffset, TimeSpan)> createFromSpanSuject = new Subject<(DateTimeOffset, TimeSpan)>();
         public IObservable<(DateTimeOffset, TimeSpan)> CreateFromSpan => createFromSpanSuject.AsObservable();
 
-        public CalendarCollectionViewLongPressHelper(
+        public CalendarCollectionViewCreateFromSpanHelper(
             UICollectionView collectionView,
             CalendarCollectionViewSource dataSource,
             CalendarCollectionViewLayout layout)
