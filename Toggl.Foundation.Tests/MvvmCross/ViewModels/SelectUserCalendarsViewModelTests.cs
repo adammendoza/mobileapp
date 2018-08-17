@@ -94,14 +94,14 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
             }
         }
 
-        public sealed class TheDoneActionEnabldProperty : SelectUserCalendarsViewModelTest
+        public sealed class TheDoneActionEnabledProperty : SelectUserCalendarsViewModelTest
         {
             [Fact, LogIfTooSlow]
             public void StartsWithFalse()
             {
                 var observer = Substitute.For<IObserver<bool>>();
 
-                ViewModel.DoneActionEnabled.Subscribe(observer);
+                ViewModel.DoneAction.Enabled.Subscribe(observer);
                 SchedulerProvider.TestScheduler.AdvanceBy(1);
 
                 observer.Received().OnNext(false);
@@ -111,7 +111,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
             public async Task EmitsTrueAfterOneCalendarHasBeenSelected()
             {
                 var observer = Substitute.For<IObserver<bool>>();
-                ViewModel.DoneActionEnabled.Subscribe(observer);
+                ViewModel.DoneAction.Enabled.Subscribe(observer);
                 var selectableUserCalendar = new SelectableUserCalendarViewModel(
                     new UserCalendar(),
                     false
@@ -131,7 +131,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
             public void DoesNotEmitAnythingWhenSelectingAdditionalCalendars()
             {
                 var observer = Substitute.For<IObserver<bool>>();
-                ViewModel.DoneActionEnabled.Subscribe(observer);
+                ViewModel.DoneAction.Enabled.Subscribe(observer);
                 var selectedableUserCalendars = Enumerable
                     .Range(0, 10)
                     .Select(id =>
@@ -155,7 +155,7 @@ namespace Toggl.Foundation.Tests.MvvmCross.ViewModels
             public void EmitsFalseAfterAllTheCalendarsHaveBeenDeselected()
             {
                 var observer = Substitute.For<IObserver<bool>>();
-                ViewModel.DoneActionEnabled.Subscribe(observer);
+                ViewModel.DoneAction.Enabled.Subscribe(observer);
                 var selectedableUserCalendars = Enumerable
                     .Range(0, 10)
                     .Select(id =>

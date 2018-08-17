@@ -33,8 +33,8 @@ namespace Toggl.Daneel.ViewControllers.Calendar
 
             this.Bind(DoneButton.Tapped(), ViewModel.DoneAction);
             this.Bind(source.ItemSelected, ViewModel.SelectCalendarAction);
-            this.Bind(ViewModel.DoneActionEnabled, DoneButton.BindEnabled());
-            this.Bind(ViewModel.DoneActionEnabled.Select(alphaForEnabled), DoneButton.BindAnimatedAlpha());
+            this.Bind(ViewModel.DoneAction.Enabled, DoneButton.BindEnabled());
+            this.Bind(ViewModel.DoneAction.Enabled.Select(alphaForEnabled), DoneButton.BindAnimatedAlpha());
         }
 
         public override void ViewDidLayoutSubviews()

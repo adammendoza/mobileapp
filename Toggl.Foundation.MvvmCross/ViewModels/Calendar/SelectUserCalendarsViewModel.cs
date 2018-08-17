@@ -25,8 +25,6 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
 
         private readonly ISubject<bool> doneActionEnabledSubject = new BehaviorSubject<bool>(false);
 
-        public IObservable<bool> DoneActionEnabled { get; }
-
         public ObservableGroupedOrderedCollection<SelectableUserCalendarViewModel> Calendars { get; }
             = new ObservableGroupedOrderedCollection<SelectableUserCalendarViewModel>(
                 indexKey: c => c.Id,
@@ -50,12 +48,8 @@ namespace Toggl.Foundation.MvvmCross.ViewModels.Calendar
             this.interactorFactory = interactorFactory;
             this.navigationService = navigationService;
 
-            DoneActionEnabled = doneActionEnabledSubject
-                .AsObservable()
-                .DistinctUntilChanged();
-
             SelectCalendarAction = new InputAction<SelectableUserCalendarViewModel>(selectCalendar);
-            DoneAction = new UIAction(done, DoneActionEnabled);
+            DoneAction = new UIAction(done, doneActionEnabledSubject.AsObservable().DistinctUntilChanged());
         }
 
         public override async Task Initialize()
