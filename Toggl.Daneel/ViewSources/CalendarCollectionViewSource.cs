@@ -5,6 +5,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
+using CoreGraphics;
 using Foundation;
 using MvvmCross.Platforms.Ios.Binding.Views;
 using Toggl.Daneel.Cells.Calendar;
@@ -122,6 +123,16 @@ namespace Toggl.Daneel.ViewSources
         public CalendarCollectionViewItemLayoutAttributes LayoutAttributesForItemAtIndexPath(NSIndexPath indexPath)
         {
             return layoutAttributes[(int)indexPath.Item];
+        }
+
+        public CalendarItem? CalendarItemAtPoint(CGPoint point)
+        {
+            var indexPath = CollectionView.IndexPathForItemAtPoint(point);
+            if (indexPath != null && indexPath.Item < calendarItems.Count)
+            {
+                return calendarItems[(int)indexPath.Item];
+            }
+            return null;
         }
 
         public NSIndexPath InsertPlaceholder(DateTimeOffset startTime, TimeSpan duration)

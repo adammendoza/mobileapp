@@ -74,6 +74,9 @@ namespace Toggl.Daneel.Views.Calendar
 
         private void longPressBegan(CGPoint point)
         {
+            if (dataSource.CalendarItemAtPoint(point) != null)
+                return;
+
             firstPoint = point;
             lastPoint = point;
             var startTime = layout.DateAtPoint(firstPoint).RoundDownToClosestQuarter();
@@ -82,6 +85,9 @@ namespace Toggl.Daneel.Views.Calendar
 
         private void longPressChanged(CGPoint point)
         {
+            if (itemIndexPath == null)
+                return;
+
             if (Math.Abs(lastPoint.Y - point.Y) < layout.HourHeight / 4)
                 return;
 
@@ -107,6 +113,9 @@ namespace Toggl.Daneel.Views.Calendar
 
         private void longPressEnded(CGPoint point)
         {
+            if (itemIndexPath == null)
+                return;
+
             lastPoint = point;
 
             DateTimeOffset startTime;
